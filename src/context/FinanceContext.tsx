@@ -220,10 +220,10 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
         name: data.name,
         type: data.type,
         balance: data.balance,
-        accountNumber: data.accountNumber,
         color: data.color || '#3b82f6',
         createdAt: now,
         updatedAt: now,
+        ...(data.accountNumber?.trim() ? { accountNumber: data.accountNumber.trim() } : {}),
       };
       await firestoreService.saveAccount(newAccount);
       return;
@@ -280,8 +280,8 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
         accountId: data.accountId,
         category: data.category,
         date: data.date,
-        notes: data.notes,
         createdAt: now,
+        ...(data.notes?.trim() ? { notes: data.notes.trim() } : {}),
       };
       await firestoreService.saveTransaction(newTx);
 
@@ -457,11 +457,11 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
             : 'IDR',
         amountInvested: data.amountInvested,
         currentValue: data.currentValue ?? data.amountInvested,
-        units: data.units,
-        platform: data.platform,
-        notes: data.notes,
         createdAt: now,
         updatedAt: now,
+        ...(data.units !== undefined ? { units: data.units } : {}),
+        ...(data.platform?.trim() ? { platform: data.platform.trim() } : {}),
+        ...(data.notes?.trim() ? { notes: data.notes.trim() } : {}),
       };
       await firestoreService.saveInvestment(newInv);
       return;

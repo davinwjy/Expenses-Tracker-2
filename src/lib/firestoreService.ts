@@ -20,6 +20,29 @@ import {
 import { firebaseAuth, firestoreDb } from './firebase';
 import { User, Account, Transaction, Investment, UserSettings } from '../types';
 
+/**
+ * Recursively removes all properties with undefined values.
+ * Firestore throws a runtime error if any field in a document is undefined.
+ */
+export function sanitizeForFirestore<T>(data: T): T {
+  if (data === null || data === undefined) {
+    return data;
+  }
+  if (Array.isArray(data)) {
+    return data.map(sanitizeForFirestore) as unknown as T;
+  }
+  if (typeof data === 'object' && !(data instanceof Date)) {
+    const cleaned: Record<string, any> = {};
+    for (const [key, value] of Object.entries(data as Record<string, any>)) {
+      if (value !== undefined) {
+        cleaned[key] = sanitizeForFirestore(value);
+      }
+    }
+    return cleaned as T;
+  }
+  return data;
+}
+
 export const firestoreService = {
   // ---------------- AUTHENTICATION ----------------
   async register(email: string, password: string, name?: string): Promise<User> {
@@ -41,7 +64,7 @@ export const firestoreService = {
     };
 
     // Save user doc
-    await setDoc(doc(firestoreDb, 'users', fbUser.uid), user);
+    await setDoc(doc(firestoreDb, 'users', fbUser.uid), sanitizeForFirestore(user));
 
     // Create starter accounts & settings if new
     await this.seedInitialUserData(fbUser.uid);
@@ -125,7 +148,7 @@ export const firestoreService = {
     ];
 
     for (const acc of starterAccounts) {
-      await setDoc(doc(firestoreDb, 'accounts', acc.id), acc);
+      await setDoc(doc(firestoreDb, 'accounts', acc.id), sanitizeForFirestore(acc));
     }
 
     const initialSettings: UserSettings = {
@@ -134,7 +157,7 @@ export const firestoreService = {
       privacyModeDefault: false,
       theme: 'dark',
     };
-    await setDoc(doc(firestoreDb, 'settings', userId), initialSettings);
+    await setDoc(doc(firestoreDb, 'settings', userId), sanitizeForFirestore(initialSettings));
   },
 
   // ---------------- REALTIME DATA SUBSCRIPTION ----------------
@@ -212,7 +235,7 @@ export const firestoreService = {
   // ---------------- CRUD ACTIONS ----------------
   async saveAccount(account: Account): Promise<void> {
     if (!firestoreDb) throw new Error('Firestore not ready');
-    await setDoc(doc(firestoreDb, 'accounts', account.id), account);
+    await setDoc(doc(firestoreDb, 'accounts', account.id), sanitizeForFirestore(account));
   },
 
   async deleteAccount(accountId: string): Promise<void> {
@@ -222,7 +245,7 @@ export const firestoreService = {
 
   async saveTransaction(transaction: Transaction): Promise<void> {
     if (!firestoreDb) throw new Error('Firestore not ready');
-    await setDoc(doc(firestoreDb, 'transactions', transaction.id), transaction);
+    await setDoc(doc(firestoreDb, 'transactions', transaction.id), sanitizeForFirestore(transaction));
   },
 
   async deleteTransaction(transactionId: string): Promise<void> {
@@ -232,7 +255,7 @@ export const firestoreService = {
 
   async saveInvestment(investment: Investment): Promise<void> {
     if (!firestoreDb) throw new Error('Firestore not ready');
-    await setDoc(doc(firestoreDb, 'investments', investment.id), investment);
+    await setDoc(doc(firestoreDb, 'investments', investment.id), sanitizeForFirestore(investment));
   },
 
   async deleteInvestment(investmentId: string): Promise<void> {
@@ -242,7 +265,7 @@ export const firestoreService = {
 
   async saveSettings(settings: UserSettings): Promise<void> {
     if (!firestoreDb) throw new Error('Firestore not ready');
-    await setDoc(doc(firestoreDb, 'settings', settings.userId), settings);
+    await setDoc(doc(firestoreDb, 'settings', settings.userId), sanitizeForFirestore(settings));
   },
 
   // ---------------- MIGRATE LOCAL DATA TO FIRESTORE ----------------
@@ -259,15 +282,15 @@ export const firestoreService = {
       const investments = (store.investments || []).map((i: any) => ({ ...i, userId }));
 
       for (const a of accounts) {
-        await setDoc(doc(firestoreDb, 'accounts', a.id), a);
+        await setDoc(doc(firestoreDb, 'accounts', a.id), sanitizeForFirestore(a));
         count++;
       }
       for (const t of transactions) {
-        await setDoc(doc(firestoreDb, 'transactions', t.id), t);
+        await setDoc(doc(firestoreDb, 'transactions', t.id), sanitizeForFirestore(t));
         count++;
       }
       for (const i of investments) {
-        await setDoc(doc(firestoreDb, 'investments', i.id), i);
+        await setDoc(doc(firestoreDb, 'investments', i.id), sanitizeForFirestore(i));
         count++;
       }
     } catch (err) {
