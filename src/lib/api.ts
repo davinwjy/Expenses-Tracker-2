@@ -6,6 +6,7 @@ import {
   UserSettings,
   DashboardStats,
 } from '../types';
+import { localDb } from './localDb';
 
 const TOKEN_KEY = 'wealthtrack_auth_token';
 
@@ -19,6 +20,39 @@ export function setAuthToken(token: string): void {
 
 export function removeAuthToken(): void {
   localStorage.removeItem(TOKEN_KEY);
+}
+
+// Track if server backend is reachable
+let isServerAvailable: boolean | null = null;
+
+async function checkServer(): Promise<boolean> {
+  if (isServerAvailable !== null) return isServerAvailable;
+
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 2000);
+
+    const res = await fetch('/api/auth/me', {
+      method: 'GET',
+      headers: { Accept: 'application/json' },
+      signal: controller.signal,
+    });
+    clearTimeout(timeoutId);
+
+    const contentType = res.headers.get('content-type') || '';
+    // If it's a 404 HTML (typical of static GitHub Pages routing), server is not available
+    if (res.status === 404 && !contentType.includes('application/json')) {
+      isServerAvailable = false;
+      return false;
+    }
+
+    // Server exists
+    isServerAvailable = true;
+    return true;
+  } catch {
+    isServerAvailable = false;
+    return false;
+  }
 }
 
 async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
@@ -37,7 +71,12 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
     headers,
   });
 
-  const data = await response.json().catch(() => ({}));
+  const contentType = response.headers.get('content-type') || '';
+  if (!contentType.includes('application/json')) {
+    throw new Error('Non-JSON response from server');
+  }
+
+  const data = await response.json();
 
   if (!response.ok) {
     throw new Error(data.error || `HTTP error ${response.status}`);
@@ -49,30 +88,83 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
 export const api = {
   // Auth
   async register(email: string, password: string, name?: string): Promise<{ token: string; user: User }> {
-    const res = await request<{ token: string; user: User }>('/api/auth/register', {
-      method: 'POST',
-      body: JSON.stringify({ email, password, name }),
-    });
-    setAuthToken(res.token);
-    return res;
+    const hasServer = await checkServer();
+    if (hasServer) {
+      try {
+        const res = await request<{ token: string; user: User }>('/api/auth/register', {
+          method: 'POST',
+          body: JSON.stringify({ email, password, name }),
+        });
+        setAuthToken(res.token);
+        return res;
+      } catch (err: any) {
+        if (err.message === 'Non-JSON response from server') {
+          isServerAvailable = false;
+        } else {
+          throw err;
+        }
+      }
+    }
+
+    // Static / Offline fallback for GitHub Pages
+    const localRes = localDb.register(email, password, name);
+    setAuthToken(localRes.token);
+    return localRes;
   },
 
   async login(email: string, password: string): Promise<{ token: string; user: User }> {
-    const res = await request<{ token: string; user: User }>('/api/auth/login', {
-      method: 'POST',
-      body: JSON.stringify({ email, password }),
-    });
-    setAuthToken(res.token);
-    return res;
+    const hasServer = await checkServer();
+    if (hasServer) {
+      try {
+        const res = await request<{ token: string; user: User }>('/api/auth/login', {
+          method: 'POST',
+          body: JSON.stringify({ email, password }),
+        });
+        setAuthToken(res.token);
+        return res;
+      } catch (err: any) {
+        if (err.message === 'Non-JSON response from server') {
+          isServerAvailable = false;
+        } else {
+          throw err;
+        }
+      }
+    }
+
+    // Static / Offline fallback for GitHub Pages
+    const localRes = localDb.login(email, password);
+    setAuthToken(localRes.token);
+    return localRes;
   },
 
   async getCurrentUser(): Promise<{ user: User }> {
-    return request<{ user: User }>('/api/auth/me');
+    const hasServer = await checkServer();
+    if (hasServer) {
+      try {
+        return await request<{ user: User }>('/api/auth/me');
+      } catch (err: any) {
+        if (err.message === 'Non-JSON response from server') {
+          isServerAvailable = false;
+        } else {
+          throw err;
+        }
+      }
+    }
+
+    return localDb.getCurrentUser();
   },
 
   // Accounts
   async getAccounts(): Promise<{ accounts: Account[] }> {
-    return request<{ accounts: Account[] }>('/api/accounts');
+    const hasServer = await checkServer();
+    if (hasServer) {
+      try {
+        return await request<{ accounts: Account[] }>('/api/accounts');
+      } catch (err) {
+        isServerAvailable = false;
+      }
+    }
+    return localDb.getAccounts();
   },
 
   async createAccount(data: {
@@ -82,34 +174,66 @@ export const api = {
     accountNumber?: string;
     color?: string;
   }): Promise<{ account: Account }> {
-    return request<{ account: Account }>('/api/accounts', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    });
+    const hasServer = await checkServer();
+    if (hasServer) {
+      try {
+        return await request<{ account: Account }>('/api/accounts', {
+          method: 'POST',
+          body: JSON.stringify(data),
+        });
+      } catch (err) {
+        isServerAvailable = false;
+      }
+    }
+    return localDb.createAccount(data);
   },
 
   async updateAccount(id: string, data: Partial<Account>): Promise<{ account: Account }> {
-    return request<{ account: Account }>(`/api/accounts/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(data),
-    });
+    const hasServer = await checkServer();
+    if (hasServer) {
+      try {
+        return await request<{ account: Account }>(`/api/accounts/${id}`, {
+          method: 'PUT',
+          body: JSON.stringify(data),
+        });
+      } catch (err) {
+        isServerAvailable = false;
+      }
+    }
+    return localDb.updateAccount(id, data);
   },
 
   async deleteAccount(id: string): Promise<{ success: boolean }> {
-    return request<{ success: boolean }>(`/api/accounts/${id}`, {
-      method: 'DELETE',
-    });
+    const hasServer = await checkServer();
+    if (hasServer) {
+      try {
+        return await request<{ success: boolean }>(`/api/accounts/${id}`, {
+          method: 'DELETE',
+        });
+      } catch (err) {
+        isServerAvailable = false;
+      }
+    }
+    return localDb.deleteAccount(id);
   },
 
   // Transactions
   async getTransactions(params?: { type?: string; accountId?: string; limit?: number }): Promise<{ transactions: Transaction[] }> {
-    const query = new URLSearchParams();
-    if (params?.type) query.append('type', params.type);
-    if (params?.accountId) query.append('accountId', params.accountId);
-    if (params?.limit) query.append('limit', String(params.limit));
+    const hasServer = await checkServer();
+    if (hasServer) {
+      try {
+        const query = new URLSearchParams();
+        if (params?.type) query.append('type', params.type);
+        if (params?.accountId) query.append('accountId', params.accountId);
+        if (params?.limit) query.append('limit', String(params.limit));
 
-    const qs = query.toString() ? `?${query.toString()}` : '';
-    return request<{ transactions: Transaction[] }>(`/api/transactions${qs}`);
+        const qs = query.toString() ? `?${query.toString()}` : '';
+        return await request<{ transactions: Transaction[] }>(`/api/transactions${qs}`);
+      } catch (err) {
+        isServerAvailable = false;
+      }
+    }
+    return localDb.getTransactions(params);
   },
 
   async createTransaction(data: {
@@ -120,23 +244,47 @@ export const api = {
     date: string;
     notes?: string;
   }): Promise<{ transaction: Transaction; updatedAccount: Account }> {
-    return request<{ transaction: Transaction; updatedAccount: Account }>('/api/transactions', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    });
+    const hasServer = await checkServer();
+    if (hasServer) {
+      try {
+        return await request<{ transaction: Transaction; updatedAccount: Account }>('/api/transactions', {
+          method: 'POST',
+          body: JSON.stringify(data),
+        });
+      } catch (err) {
+        isServerAvailable = false;
+      }
+    }
+    return localDb.createTransaction(data);
   },
 
   async updateTransaction(id: string, data: Partial<Transaction>): Promise<{ transaction: Transaction }> {
-    return request<{ transaction: Transaction }>(`/api/transactions/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(data),
-    });
+    const hasServer = await checkServer();
+    if (hasServer) {
+      try {
+        return await request<{ transaction: Transaction }>(`/api/transactions/${id}`, {
+          method: 'PUT',
+          body: JSON.stringify(data),
+        });
+      } catch (err) {
+        isServerAvailable = false;
+      }
+    }
+    return localDb.updateTransaction(id, data);
   },
 
   async deleteTransaction(id: string): Promise<{ success: boolean }> {
-    return request<{ success: boolean }>(`/api/transactions/${id}`, {
-      method: 'DELETE',
-    });
+    const hasServer = await checkServer();
+    if (hasServer) {
+      try {
+        return await request<{ success: boolean }>(`/api/transactions/${id}`, {
+          method: 'DELETE',
+        });
+      } catch (err) {
+        isServerAvailable = false;
+      }
+    }
+    return localDb.deleteTransaction(id);
   },
 
   // Transfers
@@ -150,15 +298,31 @@ export const api = {
     date?: string;
     notes?: string;
   }): Promise<{ success: boolean; transaction: Transaction }> {
-    return request<{ success: boolean; transaction: Transaction }>('/api/transfers', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    });
+    const hasServer = await checkServer();
+    if (hasServer) {
+      try {
+        return await request<{ success: boolean; transaction: Transaction }>('/api/transfers', {
+          method: 'POST',
+          body: JSON.stringify(data),
+        });
+      } catch (err) {
+        isServerAvailable = false;
+      }
+    }
+    return localDb.executeTransfer(data);
   },
 
   // Investments
   async getInvestments(): Promise<{ investments: Investment[] }> {
-    return request<{ investments: Investment[] }>('/api/investments');
+    const hasServer = await checkServer();
+    if (hasServer) {
+      try {
+        return await request<{ investments: Investment[] }>('/api/investments');
+      } catch (err) {
+        isServerAvailable = false;
+      }
+    }
+    return localDb.getInvestments();
   },
 
   async createInvestment(data: {
@@ -170,39 +334,87 @@ export const api = {
     platform?: string;
     notes?: string;
   }): Promise<{ investment: Investment }> {
-    return request<{ investment: Investment }>('/api/investments', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    });
+    const hasServer = await checkServer();
+    if (hasServer) {
+      try {
+        return await request<{ investment: Investment }>('/api/investments', {
+          method: 'POST',
+          body: JSON.stringify(data),
+        });
+      } catch (err) {
+        isServerAvailable = false;
+      }
+    }
+    return localDb.createInvestment(data);
   },
 
   async updateInvestment(id: string, data: Partial<Investment>): Promise<{ investment: Investment }> {
-    return request<{ investment: Investment }>(`/api/investments/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(data),
-    });
+    const hasServer = await checkServer();
+    if (hasServer) {
+      try {
+        return await request<{ investment: Investment }>(`/api/investments/${id}`, {
+          method: 'PUT',
+          body: JSON.stringify(data),
+        });
+      } catch (err) {
+        isServerAvailable = false;
+      }
+    }
+    return localDb.updateInvestment(id, data);
   },
 
   async deleteInvestment(id: string): Promise<{ success: boolean }> {
-    return request<{ success: boolean }>(`/api/investments/${id}`, {
-      method: 'DELETE',
-    });
+    const hasServer = await checkServer();
+    if (hasServer) {
+      try {
+        return await request<{ success: boolean }>(`/api/investments/${id}`, {
+          method: 'DELETE',
+        });
+      } catch (err) {
+        isServerAvailable = false;
+      }
+    }
+    return localDb.deleteInvestment(id);
   },
 
   // Settings
   async getSettings(): Promise<{ settings: UserSettings }> {
-    return request<{ settings: UserSettings }>('/api/settings');
+    const hasServer = await checkServer();
+    if (hasServer) {
+      try {
+        return await request<{ settings: UserSettings }>('/api/settings');
+      } catch (err) {
+        isServerAvailable = false;
+      }
+    }
+    return localDb.getSettings();
   },
 
   async updateSettings(data: Partial<UserSettings>): Promise<{ settings: UserSettings }> {
-    return request<{ settings: UserSettings }>('/api/settings', {
-      method: 'PUT',
-      body: JSON.stringify(data),
-    });
+    const hasServer = await checkServer();
+    if (hasServer) {
+      try {
+        return await request<{ settings: UserSettings }>('/api/settings', {
+          method: 'PUT',
+          body: JSON.stringify(data),
+        });
+      } catch (err) {
+        isServerAvailable = false;
+      }
+    }
+    return localDb.updateSettings(data);
   },
 
   // Stats
   async getDashboardStats(): Promise<DashboardStats> {
-    return request<DashboardStats>('/api/stats/dashboard');
+    const hasServer = await checkServer();
+    if (hasServer) {
+      try {
+        return await request<DashboardStats>('/api/stats/dashboard');
+      } catch (err) {
+        isServerAvailable = false;
+      }
+    }
+    return localDb.getDashboardStats();
   },
 };
