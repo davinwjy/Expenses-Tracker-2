@@ -277,7 +277,7 @@ export const StatsView: React.FC = () => {
             <span>USD / IDR Exchange Rate Setting</span>
           </div>
           <p className="text-xs text-slate-400">
-            Used to calculate net worth and convert US ETF, Bitcoin, and USD holdings into IDR equivalents.
+            Used to calculate net worth and convert US ETF and USD holdings into IDR equivalents.
           </p>
 
           <form onSubmit={handleUpdateRate} className="flex items-center gap-2 pt-1">

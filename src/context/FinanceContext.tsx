@@ -146,14 +146,21 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setIsLoading(true);
 
     const unsubscribe = firestoreService.subscribeToUserData(user.id, (data) => {
+      // Normalize Bitcoin currency to IDR
+      const normalizedInvestments = data.investments.map((inv) =>
+        inv.category === 'Bitcoin' && inv.currency !== 'IDR'
+          ? { ...inv, currency: 'IDR' as const }
+          : inv
+      );
+
       setAccounts(data.accounts);
       setTransactions(data.transactions);
-      setInvestments(data.investments);
+      setInvestments(normalizedInvestments);
       setSettings(data.settings);
       const rate = data.settings?.usdIdrRate || 15850;
       setUsdIdrRate(rate);
 
-      const computed = computeStats(data.accounts, data.transactions, data.investments, rate);
+      const computed = computeStats(data.accounts, data.transactions, normalizedInvestments, rate);
       setStats(computed);
       setIsLoading(false);
     });
@@ -176,9 +183,15 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
         api.getSettings(),
       ]);
 
+      const normalizedInvestments = invRes.investments.map((inv) =>
+        inv.category === 'Bitcoin' && inv.currency !== 'IDR'
+          ? { ...inv, currency: 'IDR' as const }
+          : inv
+      );
+
       setAccounts(accRes.accounts);
       setTransactions(txRes.transactions);
-      setInvestments(invRes.investments);
+      setInvestments(normalizedInvestments);
       setStats(statsRes);
       setSettings(setRes.settings);
       if (setRes.settings?.usdIdrRate) {
@@ -452,7 +465,7 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
         name: data.name,
         category: data.category,
         currency:
-          data.category === 'USD' || data.category === 'Bitcoin' || data.category === 'ETF USA'
+          data.category === 'USD' || data.category === 'ETF USA'
             ? 'USD'
             : 'IDR',
         amountInvested: data.amountInvested,
@@ -475,9 +488,15 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
     if (isFirebase && user) {
       const target = investments.find((i) => i.id === id);
       if (target) {
+        const nextCategory = data.category || target.category;
+        const nextCurrency =
+          data.currency ??
+          (nextCategory === 'USD' || nextCategory === 'ETF USA' ? 'USD' : 'IDR');
+
         await firestoreService.saveInvestment({
           ...target,
           ...data,
+          currency: nextCurrency,
           updatedAt: new Date().toISOString(),
         });
       }

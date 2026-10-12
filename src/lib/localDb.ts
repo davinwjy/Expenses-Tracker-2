@@ -22,7 +22,23 @@ function getStore(): LocalStorageSchema {
   try {
     const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (raw) {
-      return JSON.parse(raw);
+      const data: LocalStorageSchema = JSON.parse(raw);
+      // Migrate Bitcoin currency to IDR if previously stored as USD
+      let modified = false;
+      data.investments?.forEach((inv) => {
+        if (inv.category === 'Bitcoin' && inv.currency !== 'IDR') {
+          inv.currency = 'IDR';
+          if (inv.amountInvested === 1200) {
+            inv.amountInvested = 18500000;
+            inv.currentValue = 24800000;
+          }
+          modified = true;
+        }
+      });
+      if (modified) {
+        saveStore(data);
+      }
+      return data;
     }
   } catch (err) {
     console.warn('Error reading local database:', err);
@@ -104,9 +120,9 @@ function getStore(): LocalStorageSchema {
       userId: defaultUser.id,
       name: 'Bitcoin (BTC)',
       category: 'Bitcoin',
-      currency: 'USD',
-      amountInvested: 1200,
-      currentValue: 1580,
+      currency: 'IDR',
+      amountInvested: 18500000,
+      currentValue: 24800000,
       units: 0.0165,
       platform: 'Indodax',
       notes: 'Digital store of value',
@@ -606,7 +622,7 @@ export const localDb = {
   }): { investment: Investment } {
     const store = getStore();
     const userId = this.getUserId();
-    const currency = (data.category === 'Saham' || data.category === 'RDPU') ? 'IDR' : 'USD';
+    const currency = (data.category === 'Saham' || data.category === 'RDPU' || data.category === 'Bitcoin') ? 'IDR' : 'USD';
     const invested = Number(data.amountInvested) || 0;
     const current = data.currentValue !== undefined ? Number(data.currentValue) : invested;
 
@@ -639,7 +655,10 @@ export const localDb = {
     if (data.name !== undefined) inv.name = data.name.trim();
     if (data.category !== undefined) {
       inv.category = data.category;
-      inv.currency = (data.category === 'Saham' || data.category === 'RDPU') ? 'IDR' : 'USD';
+      inv.currency = (data.category === 'Saham' || data.category === 'RDPU' || data.category === 'Bitcoin') ? 'IDR' : 'USD';
+    }
+    if (data.currency !== undefined) {
+      inv.currency = data.currency;
     }
     if (data.amountInvested !== undefined) inv.amountInvested = Number(data.amountInvested);
     if (data.currentValue !== undefined) inv.currentValue = Number(data.currentValue);

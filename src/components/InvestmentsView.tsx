@@ -68,8 +68,8 @@ export const InvestmentsView: React.FC = () => {
     { id: 'all', label: 'All Portfolio' },
     { id: 'Saham', label: 'Saham (IDR)' },
     { id: 'RDPU', label: 'RDPU (IDR)' },
+    { id: 'Bitcoin', label: 'Bitcoin (IDR)' },
     { id: 'ETF USA', label: 'ETF USA (USD)' },
-    { id: 'Bitcoin', label: 'Bitcoin (USD)' },
     { id: 'USD', label: 'USD Cash' },
   ];
 

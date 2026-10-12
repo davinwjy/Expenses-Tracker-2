@@ -285,13 +285,13 @@ export const DashboardView: React.FC = () => {
                 <Coins className="w-4 h-4" />
                 <span>Bitcoin</span>
               </div>
-              <span className="text-[10px] text-slate-500 font-mono">USD</span>
+              <span className="text-[10px] text-slate-500 font-mono">IDR</span>
             </div>
             <p className="text-sm sm:text-base font-extrabold text-white font-mono">
-              {formatMasked(categoryAllocations['Bitcoin']?.usdValue || 0, 'USD', isPrivacyMode)}
+              {formatMasked(categoryAllocations['Bitcoin']?.idrValue || 0, 'IDR', isPrivacyMode)}
             </p>
             <p className="text-[11px] text-slate-400 mt-1">
-              &asymp; {formatMasked(categoryAllocations['Bitcoin']?.idrValue || 0, 'IDR', isPrivacyMode)}
+              {categoryAllocations['Bitcoin']?.count || 0} holding(s)
             </p>
           </div>
 

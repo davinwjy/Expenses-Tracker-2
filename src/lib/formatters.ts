@@ -92,7 +92,7 @@ export const INVESTMENT_CATEGORY_DETAILS: Record<
   },
   'Bitcoin': {
     label: 'Bitcoin (Crypto)',
-    currency: 'USD',
+    currency: 'IDR',
     badgeColor: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
     iconBg: 'bg-amber-500/20 text-amber-400',
   },

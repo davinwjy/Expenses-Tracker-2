@@ -173,11 +173,11 @@ app.post('/api/auth/register', (req: Request, res: Response): void => {
         userId,
         name: 'Bitcoin (BTC)',
         category: 'Bitcoin',
-        currency: 'USD',
-        amountInvested: 1200,
-        currentValue: 1580,
+        currency: 'IDR',
+        amountInvested: 18500000,
+        currentValue: 24800000,
         units: 0.0165,
-        platform: 'Indodax / Cold Wallet',
+        platform: 'Indodax / Tokocrypto',
         notes: 'Digital store of value',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -758,8 +758,8 @@ app.post('/api/investments', authenticateToken, (req: AuthenticatedRequest, res:
       return;
     }
 
-    // Saham and RDPU are IDR; USD, Bitcoin, and ETF USA are USD
-    const currency = (category === 'Saham' || category === 'RDPU') ? 'IDR' : 'USD';
+    // Saham, RDPU, and Bitcoin are IDR; USD and ETF USA are USD
+    const currency = (category === 'Saham' || category === 'RDPU' || category === 'Bitcoin') ? 'IDR' : 'USD';
 
     const invested = Number(amountInvested) || 0;
     const current = currentValue !== undefined ? Number(currentValue) : invested;
@@ -804,7 +804,7 @@ app.put('/api/investments/:id', authenticateToken, (req: AuthenticatedRequest, r
     if (name !== undefined) inv.name = String(name).trim();
     if (category !== undefined) {
       inv.category = category;
-      inv.currency = (category === 'Saham' || category === 'RDPU') ? 'IDR' : 'USD';
+      inv.currency = (category === 'Saham' || category === 'RDPU' || category === 'Bitcoin') ? 'IDR' : 'USD';
     }
     if (amountInvested !== undefined) inv.amountInvested = Number(amountInvested);
     if (currentValue !== undefined) inv.currentValue = Number(currentValue);

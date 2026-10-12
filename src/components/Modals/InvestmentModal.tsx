@@ -7,8 +7,8 @@ import { formatIdr, formatUsd } from '../../lib/formatters';
 const INVESTMENT_CATEGORIES: { id: InvestmentCategory; label: string; currency: 'IDR' | 'USD'; example: string }[] = [
   { id: 'Saham', label: 'Saham (ID Stocks)', currency: 'IDR', example: 'e.g. BBCA, BBRI, ASII' },
   { id: 'RDPU', label: 'RDPU (Money Market)', currency: 'IDR', example: 'e.g. Sucorinvest Stable Fund' },
+  { id: 'Bitcoin', label: 'Bitcoin (BTC)', currency: 'IDR', example: 'e.g. Cold storage, Indodax, Pintu' },
   { id: 'ETF USA', label: 'ETF USA (S&P 500)', currency: 'USD', example: 'e.g. VOO, QQQ, SCHD, SPY' },
-  { id: 'Bitcoin', label: 'Bitcoin (BTC)', currency: 'USD', example: 'e.g. Cold storage, Indodax' },
   { id: 'USD', label: 'USD Holdings', currency: 'USD', example: 'e.g. Wise USD balance, Deposit' },
 ];
 
@@ -100,6 +100,7 @@ export const InvestmentModal: React.FC = () => {
         await updateInvestment(editingInvestment.id, {
           name: name.trim(),
           category,
+          currency: selectedCategoryMeta.currency,
           amountInvested: parsedInvested,
           currentValue: parsedCurrent,
           units: units ? Number(units) : undefined,
