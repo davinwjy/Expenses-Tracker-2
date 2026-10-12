@@ -32,7 +32,7 @@ async function checkServer(): Promise<boolean> {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 2000);
 
-    const res = await fetch('/api/auth/me', {
+    const res = await fetch('/api/health', {
       method: 'GET',
       headers: { Accept: 'application/json' },
       signal: controller.signal,
@@ -40,15 +40,13 @@ async function checkServer(): Promise<boolean> {
     clearTimeout(timeoutId);
 
     const contentType = res.headers.get('content-type') || '';
-    // If it's a 404 HTML (typical of static GitHub Pages routing), server is not available
-    if (res.status === 404 && !contentType.includes('application/json')) {
-      isServerAvailable = false;
-      return false;
+    if (res.ok && contentType.includes('application/json')) {
+      isServerAvailable = true;
+      return true;
     }
 
-    // Server exists
-    isServerAvailable = true;
-    return true;
+    isServerAvailable = false;
+    return false;
   } catch {
     isServerAvailable = false;
     return false;

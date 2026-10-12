@@ -13,12 +13,19 @@ import { TransferModal } from './components/Modals/TransferModal';
 import { AccountModal } from './components/Modals/AccountModal';
 import { InvestmentModal } from './components/Modals/InvestmentModal';
 import { SyncModal } from './components/Modals/SyncModal';
+import { FirebaseSetupModal } from './components/Modals/FirebaseSetupModal';
 import { AuthModal } from './components/AuthModal';
 import { Wallet, Loader2 } from 'lucide-react';
 
 const MainAppContent: React.FC = () => {
   const { isAuthenticated, isLoading: authLoading } = useAuth();
-  const { activeTab, isSyncModalOpen, setIsSyncModalOpen } = useFinance();
+  const {
+    activeTab,
+    isSyncModalOpen,
+    setIsSyncModalOpen,
+    isFirebaseSetupOpen,
+    setIsFirebaseSetupOpen,
+  } = useFinance();
 
   if (authLoading) {
     return (
@@ -61,6 +68,7 @@ const MainAppContent: React.FC = () => {
       <AccountModal />
       <InvestmentModal />
       <SyncModal isOpen={isSyncModalOpen} onClose={() => setIsSyncModalOpen(false)} />
+      <FirebaseSetupModal isOpen={isFirebaseSetupOpen} onClose={() => setIsFirebaseSetupOpen(false)} />
     </div>
   );
 };

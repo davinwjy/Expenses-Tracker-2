@@ -11,12 +11,14 @@ import {
   Upload,
   Check,
   AlertCircle,
+  Flame,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { decodeSyncString, importUserData } from '../lib/sync';
+import { FirebaseSetupModal } from './Modals/FirebaseSetupModal';
 
 export const AuthModal: React.FC = () => {
-  const { login, register, quickDemoLogin } = useAuth();
+  const { login, register, quickDemoLogin, isFirebase } = useAuth();
 
   const [mode, setMode] = useState<'login' | 'register' | 'sync'>('login');
   const [email, setEmail] = useState('');
@@ -26,6 +28,7 @@ export const AuthModal: React.FC = () => {
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isFirebaseModalOpen, setIsFirebaseModalOpen] = useState(false);
 
   // Auto-import if user opened a sync link with ?sync=...
   useEffect(() => {
@@ -363,9 +366,23 @@ export const AuthModal: React.FC = () => {
             <p className="text-center text-[11px] text-slate-500 mt-2">
               Want to sync from your PC? Use the <strong className="text-indigo-400">"Link PC"</strong> tab above!
             </p>
+
+            {/* Direct Firebase setup link */}
+            <div className="pt-3 text-center">
+              <button
+                type="button"
+                onClick={() => setIsFirebaseModalOpen(true)}
+                className="inline-flex items-center gap-1.5 text-xs text-amber-400 hover:text-amber-300 underline font-medium cursor-pointer"
+              >
+                <Flame className="w-3.5 h-3.5" />
+                <span>{isFirebase ? '🔥 Firebase Cloud Sync Active' : '🔥 Hubungkan ke Firebase (Sinkron Real-Time)'}</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
+
+      <FirebaseSetupModal isOpen={isFirebaseModalOpen} onClose={() => setIsFirebaseModalOpen(false)} />
     </div>
   );
 };

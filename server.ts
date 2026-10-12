@@ -64,6 +64,11 @@ function getUserRate(userId: string): number {
   return userSetting ? userSetting.usdIdrRate : 15850;
 }
 
+// Health Check Endpoint
+app.get('/api/health', (_req: Request, res: Response): void => {
+  res.json({ status: 'ok', serverTime: new Date().toISOString() });
+});
+
 // -------------------------------------------------------------
 // AUTH ROUTES
 // -------------------------------------------------------------

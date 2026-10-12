@@ -15,13 +15,14 @@ import {
   Building2,
   Check,
   Smartphone,
+  Flame,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useFinance } from '../context/FinanceContext';
 import { formatIdr } from '../lib/formatters';
 
 export const Navbar: React.FC = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, isFirebase } = useAuth();
   const {
     activeTab,
     setActiveTab,
@@ -40,6 +41,7 @@ export const Navbar: React.FC = () => {
     setEditingInvestment,
     setEditingAccount,
     setIsSyncModalOpen,
+    setIsFirebaseSetupOpen,
   } = useFinance();
 
   const [isNewMenuOpen, setIsNewMenuOpen] = useState(false);
@@ -158,7 +160,21 @@ export const Navbar: React.FC = () => {
               className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold border bg-slate-900 border-slate-800 text-indigo-300 hover:text-white hover:bg-indigo-600/20 hover:border-indigo-500/40 transition-all cursor-pointer"
             >
               <Smartphone className="w-3.5 h-3.5 text-indigo-400" />
-              <span className="hidden md:inline">Sync to Phone</span>
+              <span className="hidden md:inline">Sync Phone</span>
+            </button>
+
+            {/* Realtime Firebase Cloud Sync Button */}
+            <button
+              onClick={() => setIsFirebaseSetupOpen(true)}
+              title={isFirebase ? 'Firebase Real-Time Cloud Sync: Active' : 'Setup Firebase Real-Time Cloud Sync'}
+              className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${
+                isFirebase
+                  ? 'bg-amber-500/10 border-amber-500/30 text-amber-300 hover:bg-amber-500/20'
+                  : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-amber-300 hover:border-amber-500/40'
+              }`}
+            >
+              <Flame className={`w-3.5 h-3.5 ${isFirebase ? 'text-amber-400 fill-amber-400/30' : 'text-slate-400'}`} />
+              <span className="hidden lg:inline">{isFirebase ? 'Cloud Active' : 'Firebase'}</span>
             </button>
 
             {/* Clean '+ New' Dropdown Menu (Replaces the 3 cluttered colorful buttons!) */}
@@ -335,6 +351,29 @@ export const Navbar: React.FC = () => {
                       <span className="font-semibold">📱 Sync to Phone</span>
                     </span>
                     <span className="text-[10px] bg-indigo-500/20 text-indigo-300 px-1.5 py-0.5 rounded font-mono">Link</span>
+                  </button>
+
+                  {/* Firebase Real-Time Cloud Sync Modal */}
+                  <button
+                    onClick={() => {
+                      setIsUserMenuOpen(false);
+                      setIsFirebaseSetupOpen(true);
+                    }}
+                    className="w-full flex items-center justify-between px-2.5 py-2 text-xs text-amber-300 hover:bg-amber-500/10 rounded-lg cursor-pointer transition-colors"
+                  >
+                    <span className="flex items-center gap-2">
+                      <Flame className="w-3.5 h-3.5 text-amber-400" />
+                      <span className="font-semibold">🔥 Real-Time Cloud Sync</span>
+                    </span>
+                    <span
+                      className={`text-[10px] px-1.5 py-0.5 rounded font-mono ${
+                        isFirebase
+                          ? 'bg-emerald-500/20 text-emerald-300'
+                          : 'bg-amber-500/20 text-amber-300'
+                      }`}
+                    >
+                      {isFirebase ? 'Active' : 'Setup'}
+                    </span>
                   </button>
 
                   {/* Sync action */}

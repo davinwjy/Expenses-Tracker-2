@@ -10,10 +10,13 @@ import {
   X,
   Building2,
   Smartphone,
+  Flame,
 } from 'lucide-react';
 import { useFinance } from '../context/FinanceContext';
+import { useAuth } from '../context/AuthContext';
 
 export const MobileNav: React.FC = () => {
+  const { isFirebase } = useAuth();
   const {
     activeTab,
     setActiveTab,
@@ -26,6 +29,7 @@ export const MobileNav: React.FC = () => {
     setEditingInvestment,
     setEditingAccount,
     setIsSyncModalOpen,
+    setIsFirebaseSetupOpen,
   } = useFinance();
 
   const [isQuickMenuOpen, setIsQuickMenuOpen] = useState(false);
@@ -132,10 +136,24 @@ export const MobileNav: React.FC = () => {
                 setIsQuickMenuOpen(false);
                 setIsSyncModalOpen(true);
               }}
-              className="col-span-2 py-2 px-3 rounded-lg bg-indigo-950/60 text-indigo-300 hover:text-white border border-indigo-800/60 text-xs font-semibold text-center flex items-center justify-center gap-1.5"
+              className="py-2 px-3 rounded-lg bg-indigo-950/60 text-indigo-300 hover:text-white border border-indigo-800/60 text-xs font-semibold text-center flex items-center justify-center gap-1.5"
             >
               <Smartphone className="w-3.5 h-3.5" />
-              <span>📱 Sync Devices / Backup</span>
+              <span>📱 Link PC</span>
+            </button>
+            <button
+              onClick={() => {
+                setIsQuickMenuOpen(false);
+                setIsFirebaseSetupOpen(true);
+              }}
+              className={`py-2 px-3 rounded-lg text-xs font-semibold text-center flex items-center justify-center gap-1.5 border ${
+                isFirebase
+                  ? 'bg-amber-950/60 text-amber-300 border-amber-800/60'
+                  : 'bg-slate-900 text-slate-300 hover:text-amber-300 border-slate-800'
+              }`}
+            >
+              <Flame className="w-3.5 h-3.5 text-amber-400" />
+              <span>{isFirebase ? '🔥 Cloud Active' : '🔥 Setup Cloud'}</span>
             </button>
           </div>
         </div>
