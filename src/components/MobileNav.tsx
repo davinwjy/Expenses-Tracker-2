@@ -9,6 +9,7 @@ import {
   TrendingUp,
   X,
   Building2,
+  Smartphone,
 } from 'lucide-react';
 import { useFinance } from '../context/FinanceContext';
 
@@ -24,6 +25,7 @@ export const MobileNav: React.FC = () => {
     setEditingTransaction,
     setEditingInvestment,
     setEditingAccount,
+    setIsSyncModalOpen,
   } = useFinance();
 
   const [isQuickMenuOpen, setIsQuickMenuOpen] = useState(false);
@@ -124,6 +126,16 @@ export const MobileNav: React.FC = () => {
               className="py-2 px-3 rounded-lg bg-slate-950 text-slate-300 hover:text-white border border-slate-800 text-xs font-semibold text-center"
             >
               + Bank / Cash
+            </button>
+            <button
+              onClick={() => {
+                setIsQuickMenuOpen(false);
+                setIsSyncModalOpen(true);
+              }}
+              className="col-span-2 py-2 px-3 rounded-lg bg-indigo-950/60 text-indigo-300 hover:text-white border border-indigo-800/60 text-xs font-semibold text-center flex items-center justify-center gap-1.5"
+            >
+              <Smartphone className="w-3.5 h-3.5" />
+              <span>📱 Sync Devices / Backup</span>
             </button>
           </div>
         </div>

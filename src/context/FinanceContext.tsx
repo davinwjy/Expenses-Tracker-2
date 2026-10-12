@@ -91,6 +91,8 @@ interface FinanceContextType {
   setEditingInvestment: (i: Investment | null) => void;
   editingTransaction: Transaction | null;
   setEditingTransaction: (t: Transaction | null) => void;
+  isSyncModalOpen: boolean;
+  setIsSyncModalOpen: (v: boolean) => void;
 }
 
 const FinanceContext = createContext<FinanceContextType | undefined>(undefined);
@@ -122,6 +124,7 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [editingAccount, setEditingAccount] = useState<Account | null>(null);
   const [editingInvestment, setEditingInvestment] = useState<Investment | null>(null);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
+  const [isSyncModalOpen, setIsSyncModalOpen] = useState(false);
 
   const togglePrivacyMode = () => {
     setIsPrivacyMode(prev => {
@@ -303,6 +306,8 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
         setEditingInvestment,
         editingTransaction,
         setEditingTransaction,
+        isSyncModalOpen,
+        setIsSyncModalOpen,
       }}
     >
       {children}
