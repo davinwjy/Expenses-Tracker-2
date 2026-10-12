@@ -13,9 +13,25 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      // Ensure trailing slash for GitHub Pages repo subdirectories so relative ./assets resolve correctly
+      if (window.location.pathname.slice(-1) !== '/' && !window.location.pathname.split('/').pop().includes('.')) {
+        window.location.replace(window.location.pathname + '/' + window.location.search + window.location.hash);
+      }
+    </script>
   </head>
   <body class="bg-slate-950 text-slate-100 antialiased selection:bg-emerald-500 selection:text-white min-h-screen">
-    <div id="root"></div>
+    <div id="root">
+      <div style="min-height: 100vh; background-color: #020617; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-family: sans-serif;">
+        <div style="text-align: center; padding: 20px;">
+          <div style="width: 48px; height: 48px; background: #10b981; border-radius: 14px; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#020617" stroke-width="2.5"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>
+          </div>
+          <h2 style="color: #ffffff; margin: 0 0 8px; font-size: 18px; font-weight: bold;">Loading WealthTrack Pro...</h2>
+          <p style="margin: 0; font-size: 13px;">Preparing personal finance dashboard</p>
+        </div>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
