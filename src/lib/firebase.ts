@@ -1,6 +1,7 @@
 import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';
 import { getAuth, Auth } from 'firebase/auth';
 import { getFirestore, Firestore } from 'firebase/firestore';
+import { defaultFirebaseConfig } from './defaultFirebaseConfig';
 
 export interface FirebaseConfig {
   apiKey: string;
@@ -14,9 +15,42 @@ export interface FirebaseConfig {
 
 const FIREBASE_CONFIG_STORAGE_KEY = 'wealthtrack_firebase_config';
 
-// 1. Get stored or env config
+// 1. Get stored, URL param, default or env config
 export function getStoredFirebaseConfig(): FirebaseConfig | null {
-  // Check localStorage first (user-configured in UI)
+  // Check URL parameter first (?fbConfig=... or ?fb=...) for 1-click HP onboarding
+  if (typeof window !== 'undefined' && window.location.search) {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const fbParam = params.get('fbConfig') || params.get('fb');
+      if (fbParam) {
+        let decoded = '';
+        try {
+          decoded = decodeURIComponent(escape(atob(fbParam)));
+        } catch {
+          decoded = decodeURIComponent(fbParam);
+        }
+        const parsed = JSON.parse(decoded);
+        if (parsed.apiKey && parsed.projectId) {
+          localStorage.setItem(FIREBASE_CONFIG_STORAGE_KEY, JSON.stringify(parsed));
+          // Clean the query param from URL without reload
+          params.delete('fbConfig');
+          params.delete('fb');
+          const newSearch = params.toString() ? `?${params.toString()}` : '';
+          window.history.replaceState({}, '', `${window.location.pathname}${newSearch}${window.location.hash}`);
+          return parsed as FirebaseConfig;
+        }
+      }
+    } catch (err) {
+      console.warn('Failed to parse Firebase config from URL param:', err);
+    }
+  }
+
+  // Check code-level defaultFirebaseConfig (baked into repo)
+  if (defaultFirebaseConfig && defaultFirebaseConfig.apiKey && defaultFirebaseConfig.projectId) {
+    return defaultFirebaseConfig;
+  }
+
+  // Check localStorage (user-configured in UI)
   try {
     const raw = localStorage.getItem(FIREBASE_CONFIG_STORAGE_KEY);
     if (raw) {
@@ -44,6 +78,20 @@ export function getStoredFirebaseConfig(): FirebaseConfig | null {
   }
 
   return null;
+}
+
+export function generateFirebaseShareUrl(config?: FirebaseConfig | null): string {
+  const targetConfig = config || getStoredFirebaseConfig();
+  if (!targetConfig) return '';
+  try {
+    const base64 = btoa(unescape(encodeURIComponent(JSON.stringify(targetConfig))));
+    const url = new URL(window.location.href);
+    url.searchParams.set('fbConfig', base64);
+    return url.toString();
+  } catch (err) {
+    console.error('Failed to encode Firebase config for share URL:', err);
+    return '';
+  }
 }
 
 // 2. Parser to extract Firebase config from text, JS snippet or JSON

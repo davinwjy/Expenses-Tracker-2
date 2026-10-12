@@ -11,6 +11,8 @@ import {
   Trash2,
   ShieldCheck,
   CloudUpload,
+  Smartphone,
+  QrCode,
 } from 'lucide-react';
 import {
   getStoredFirebaseConfig,
@@ -18,6 +20,7 @@ import {
   saveFirebaseConfig,
   removeFirebaseConfig,
   isFirebaseActive,
+  generateFirebaseShareUrl,
   FirebaseConfig,
 } from '../../lib/firebase';
 import { firestoreService } from '../../lib/firestoreService';
@@ -40,6 +43,8 @@ export const FirebaseSetupModal: React.FC<FirebaseSetupModalProps> = ({ isOpen, 
   const [isSaving, setIsSaving] = useState(false);
   const [isMigrating, setIsMigrating] = useState(false);
   const [migratedCount, setMigratedCount] = useState<number | null>(null);
+  const [copiedShareLink, setCopiedShareLink] = useState(false);
+  const [showQrCode, setShowQrCode] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -197,6 +202,66 @@ export const FirebaseSetupModal: React.FC<FirebaseSetupModalProps> = ({ isOpen, 
                   )}
                 </div>
               )}
+
+              {/* Seamless Mobile Connect Card */}
+              <div className="pt-3 border-t border-emerald-500/20 space-y-2">
+                <div className="flex items-center gap-2 text-white font-semibold text-xs">
+                  <Smartphone className="w-4 h-4 text-emerald-400" />
+                  <span>Hubungkan HP ke Database Ini (Tanpa Perlu Paste Script di HP)</span>
+                </div>
+                <p className="text-[11px] text-slate-300">
+                  Buka link khusus ini di HP Anda (atau scan QR). Firebase akan langsung otomatis aktif di browser HP tanpa perlu ketik/paste script lagi:
+                </p>
+
+                <div className="flex flex-wrap items-center gap-2 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const shareUrl = generateFirebaseShareUrl(currentConfig);
+                      navigator.clipboard.writeText(shareUrl);
+                      setCopiedShareLink(true);
+                      setTimeout(() => setCopiedShareLink(false), 3000);
+                    }}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-medium text-xs border border-slate-700 transition-colors cursor-pointer"
+                  >
+                    {copiedShareLink ? (
+                      <>
+                        <Check className="w-3.5 h-3.5 text-emerald-400" />
+                        <span className="text-emerald-400">Tautan Berhasil Disalin!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-3.5 h-3.5 text-slate-400" />
+                        <span>Salin Link Buka di HP</span>
+                      </>
+                    )}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setShowQrCode(!showQrCode)}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs border border-slate-700 transition-colors cursor-pointer"
+                  >
+                    <QrCode className="w-3.5 h-3.5 text-amber-400" />
+                    <span>{showQrCode ? 'Tutup QR Code' : 'Scan QR Code dengan Kamera HP'}</span>
+                  </button>
+                </div>
+
+                {showQrCode && (
+                  <div className="p-3 bg-white rounded-xl flex flex-col items-center justify-center gap-2 w-fit mx-auto mt-2">
+                    <img
+                      src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(
+                        generateFirebaseShareUrl(currentConfig)
+                      )}`}
+                      alt="Scan dengan HP untuk menghubungkan Firebase"
+                      className="w-40 h-40"
+                    />
+                    <p className="text-[10px] text-slate-800 font-semibold text-center">
+                      Arahkan kamera HP ke QR ini untuk langsung aktif di HP
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
           ) : (
             <>
