@@ -181,90 +181,120 @@ export const Navbar: React.FC = () => {
             <div className="relative" ref={newMenuRef}>
               <button
                 onClick={() => setIsNewMenuOpen(!isNewMenuOpen)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs shadow-md shadow-emerald-500/20 transition-all cursor-pointer"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold text-xs shadow-md shadow-emerald-500/20 active:scale-95 transition-all cursor-pointer"
               >
                 <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
-                <span className="hidden sm:inline">New</span>
-                <ChevronDown className={`w-3 h-3 transition-transform duration-150 ${isNewMenuOpen ? 'rotate-180' : ''}`} />
+                <span className="hidden sm:inline">New Action</span>
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${isNewMenuOpen ? 'rotate-180' : ''}`} />
               </button>
 
               {isNewMenuOpen && (
-                <div className="absolute right-0 mt-2 w-52 p-1.5 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl z-50 animate-in fade-in zoom-in-95">
-                  <div className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                    Quick Action
+                <div className="absolute right-0 mt-2.5 w-64 bg-slate-900/95 backdrop-blur-md border border-slate-700/80 rounded-2xl shadow-2xl shadow-black/60 z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+                  {/* Header */}
+                  <div className="px-3.5 py-2.5 border-b border-slate-800/80 bg-slate-950/40 flex items-center justify-between">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                      Quick Action
+                    </span>
+                    <span className="text-[10px] text-slate-500 font-medium">Shortcut</span>
                   </div>
 
-                  <button
-                    onClick={() => {
-                      setIsNewMenuOpen(false);
-                      setEditingTransaction(null);
-                      setIsAddExpenseOpen(true);
-                    }}
-                    className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-xs font-medium text-slate-200 hover:bg-slate-800 cursor-pointer transition-colors"
-                  >
-                    <div className="w-6 h-6 rounded-md bg-rose-500/20 text-rose-400 flex items-center justify-center">
-                      <Receipt className="w-3.5 h-3.5" />
-                    </div>
-                    <span>Record Expense</span>
-                  </button>
+                  {/* Frequent Actions */}
+                  <div className="p-1.5 space-y-1">
+                    <button
+                      onClick={() => {
+                        setIsNewMenuOpen(false);
+                        setEditingTransaction(null);
+                        setIsAddExpenseOpen(true);
+                      }}
+                      className="w-full flex items-center gap-3 px-2.5 py-2 rounded-xl text-left hover:bg-slate-800/80 active:bg-slate-800 transition-colors group cursor-pointer"
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-rose-500/15 border border-rose-500/20 text-rose-400 flex items-center justify-center shrink-0 group-hover:scale-105 group-hover:bg-rose-500/25 transition-all">
+                        <Receipt className="w-4 h-4" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="text-xs font-semibold text-slate-100 group-hover:text-white">Record Expense</div>
+                        <div className="text-[10px] text-slate-400 truncate">Log daily expense & deduct balance</div>
+                      </div>
+                    </button>
 
-                  <button
-                    onClick={() => {
-                      setIsNewMenuOpen(false);
-                      setTransferInitialMode('bank_to_investment');
-                      setIsTransferOpen(true);
-                    }}
-                    className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-xs font-medium text-slate-200 hover:bg-slate-800 cursor-pointer transition-colors"
-                  >
-                    <div className="w-6 h-6 rounded-md bg-indigo-500/20 text-indigo-400 flex items-center justify-center">
-                      <TrendingUp className="w-3.5 h-3.5" />
-                    </div>
-                    <span>Bank &rarr; Investment</span>
-                  </button>
+                    <button
+                      onClick={() => {
+                        setIsNewMenuOpen(false);
+                        setTransferInitialMode('bank_to_investment');
+                        setIsTransferOpen(true);
+                      }}
+                      className="w-full flex items-center gap-3 px-2.5 py-2 rounded-xl text-left hover:bg-slate-800/80 active:bg-slate-800 transition-colors group cursor-pointer"
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-indigo-500/15 border border-indigo-500/20 text-indigo-400 flex items-center justify-center shrink-0 group-hover:scale-105 group-hover:bg-indigo-500/25 transition-all">
+                        <TrendingUp className="w-4 h-4" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="text-xs font-semibold text-slate-100 group-hover:text-white">Bank to Investment</div>
+                        <div className="text-[10px] text-slate-400 truncate">Top-up stocks, crypto, RDPU</div>
+                      </div>
+                    </button>
 
-                  <button
-                    onClick={() => {
-                      setIsNewMenuOpen(false);
-                      setTransferInitialMode('account_to_account');
-                      setIsTransferOpen(true);
-                    }}
-                    className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-xs font-medium text-slate-200 hover:bg-slate-800 cursor-pointer transition-colors"
-                  >
-                    <div className="w-6 h-6 rounded-md bg-blue-500/20 text-blue-400 flex items-center justify-center">
-                      <ArrowRightLeft className="w-3.5 h-3.5" />
-                    </div>
-                    <span>Move Bank to Cash</span>
-                  </button>
+                    <button
+                      onClick={() => {
+                        setIsNewMenuOpen(false);
+                        setTransferInitialMode('account_to_account');
+                        setIsTransferOpen(true);
+                      }}
+                      className="w-full flex items-center gap-3 px-2.5 py-2 rounded-xl text-left hover:bg-slate-800/80 active:bg-slate-800 transition-colors group cursor-pointer"
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-blue-500/15 border border-blue-500/20 text-blue-400 flex items-center justify-center shrink-0 group-hover:scale-105 group-hover:bg-blue-500/25 transition-all">
+                        <ArrowRightLeft className="w-4 h-4" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="text-xs font-semibold text-slate-100 group-hover:text-white">Move Bank to Cash</div>
+                        <div className="text-[10px] text-slate-400 truncate">Transfer between accounts</div>
+                      </div>
+                    </button>
+                  </div>
 
-                  <div className="border-t border-slate-800 my-1" />
+                  {/* Section Divider */}
+                  <div className="border-t border-slate-800/80 bg-slate-950/20 px-3.5 py-1.5">
+                    <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
+                      Master Data
+                    </span>
+                  </div>
 
-                  <button
-                    onClick={() => {
-                      setIsNewMenuOpen(false);
-                      setEditingInvestment(null);
-                      setIsAddInvestmentOpen(true);
-                    }}
-                    className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 cursor-pointer transition-colors"
-                  >
-                    <div className="w-6 h-6 rounded-md bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
-                      <Plus className="w-3.5 h-3.5" />
-                    </div>
-                    <span>Add Investment Asset</span>
-                  </button>
+                  {/* Master Data Creation */}
+                  <div className="p-1.5 pt-0.5 space-y-1">
+                    <button
+                      onClick={() => {
+                        setIsNewMenuOpen(false);
+                        setEditingInvestment(null);
+                        setIsAddInvestmentOpen(true);
+                      }}
+                      className="w-full flex items-center gap-3 px-2.5 py-2 rounded-xl text-left hover:bg-slate-800/80 active:bg-slate-800 transition-colors group cursor-pointer"
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-emerald-500/15 border border-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 group-hover:scale-105 group-hover:bg-emerald-500/25 transition-all">
+                        <Plus className="w-4 h-4" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="text-xs font-semibold text-slate-100 group-hover:text-white">Add Investment Asset</div>
+                        <div className="text-[10px] text-slate-400 truncate">Saham, Bitcoin, RDPU, ETF</div>
+                      </div>
+                    </button>
 
-                  <button
-                    onClick={() => {
-                      setIsNewMenuOpen(false);
-                      setEditingAccount(null);
-                      setIsAddAccountOpen(true);
-                    }}
-                    className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 cursor-pointer transition-colors"
-                  >
-                    <div className="w-6 h-6 rounded-md bg-sky-500/20 text-sky-400 flex items-center justify-center">
-                      <Building2 className="w-3.5 h-3.5" />
-                    </div>
-                    <span>Add Bank / Cash Account</span>
-                  </button>
+                    <button
+                      onClick={() => {
+                        setIsNewMenuOpen(false);
+                        setEditingAccount(null);
+                        setIsAddAccountOpen(true);
+                      }}
+                      className="w-full flex items-center gap-3 px-2.5 py-2 rounded-xl text-left hover:bg-slate-800/80 active:bg-slate-800 transition-colors group cursor-pointer"
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-sky-500/15 border border-sky-500/20 text-sky-400 flex items-center justify-center shrink-0 group-hover:scale-105 group-hover:bg-sky-500/25 transition-all">
+                        <Building2 className="w-4 h-4" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="text-xs font-semibold text-slate-100 group-hover:text-white">Add Bank / Cash Account</div>
+                        <div className="text-[10px] text-slate-400 truncate">BCA, Mandiri, Dompet Tunai</div>
+                      </div>
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
