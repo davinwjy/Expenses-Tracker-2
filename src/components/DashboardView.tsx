@@ -121,6 +121,41 @@ export const DashboardView: React.FC = () => {
                 {unrealizedPnlIdr >= 0 ? '+' : ''}{pnlPercent.toFixed(1)}% ROI
               </span>
             </div>
+
+            {/* Visual Asset Allocation Balance Scale */}
+            {netWorthIdr > 0 && (
+              <div className="pt-2 space-y-1.5 max-w-lg">
+                {(() => {
+                  const totalAssetsNominal = liquidCashIdr + investmentValueIdr;
+                  const liquidRatio = totalAssetsNominal > 0 ? Math.round((liquidCashIdr / totalAssetsNominal) * 100) : 50;
+                  const investedRatio = 100 - liquidRatio;
+                  return (
+                    <>
+                      <div className="flex items-center justify-between text-[11px] text-slate-400">
+                        <span className="flex items-center gap-1.5">
+                          <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0" />
+                          <span>Liquid Cash ({liquidRatio}%)</span>
+                        </span>
+                        <span className="flex items-center gap-1.5">
+                          <span className="w-2 h-2 rounded-full bg-indigo-400 shrink-0" />
+                          <span>Investasi ({investedRatio}%)</span>
+                        </span>
+                      </div>
+                      <div className="w-full h-2 rounded-full bg-slate-800/80 overflow-hidden flex gap-0.5 p-0.5 border border-slate-700/50">
+                        <div
+                          style={{ width: `${liquidRatio}%` }}
+                          className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-teal-400 transition-all duration-500"
+                        />
+                        <div
+                          style={{ width: `${investedRatio}%` }}
+                          className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-blue-500 transition-all duration-500"
+                        />
+                      </div>
+                    </>
+                  );
+                })()}
+              </div>
+            )}
           </div>
 
           {/* Clean Unified Action Pills */}

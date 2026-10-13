@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { FinanceProvider, useFinance } from './context/FinanceContext';
-import { Navbar } from './components/Navbar';
+import { Sidebar } from './components/Sidebar';
+import { TopHeader } from './components/TopHeader';
 import { MobileNav } from './components/MobileNav';
 import { DashboardView } from './components/DashboardView';
 import { ExpensesView } from './components/ExpensesView';
@@ -24,6 +25,28 @@ const MainAppContent: React.FC = () => {
     setIsFirebaseSetupOpen,
   } = useFinance();
 
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
+    try {
+      return localStorage.getItem('wealthtrack_sidebar_collapsed') === 'true';
+    } catch {
+      return false;
+    }
+  });
+
+  const toggleSidebarCollapse = () => {
+    setIsSidebarCollapsed((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem('wealthtrack_sidebar_collapsed', String(next));
+      } catch {
+        // Ignore storage errors
+      }
+      return next;
+    });
+  };
+
   if (authLoading) {
     return (
       <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center gap-3">
@@ -43,28 +66,43 @@ const MainAppContent: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
-      {/* Top Navbar */}
-      <Navbar />
+    <div className="min-h-screen bg-[#0a0e17] text-slate-100 flex flex-col">
+      {/* Modern Desktop Left Sidebar & Contextual Header */}
+      <div className="flex flex-row min-h-screen">
+        <Sidebar
+          isMobileOpen={isMobileMenuOpen}
+          onCloseMobile={() => setIsMobileMenuOpen(false)}
+          isCollapsed={isSidebarCollapsed}
+          onToggleCollapse={toggleSidebarCollapse}
+        />
 
-      {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24 md:pb-12">
-        {activeTab === 'dashboard' && <DashboardView />}
-        {activeTab === 'expenses' && <ExpensesView />}
-        {activeTab === 'accounts' && <AccountsView />}
-        {activeTab === 'investments' && <InvestmentsView />}
-        {activeTab === 'stats' && <StatsView />}
-      </main>
+        <div className="flex-1 flex flex-col min-w-0 min-h-screen">
+          <TopHeader
+            onOpenMobileMenu={() => setIsMobileMenuOpen(true)}
+          />
 
-      {/* Mobile Floating & Bottom Navigation Bar */}
+          <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24 lg:pb-12">
+            {activeTab === 'dashboard' && <DashboardView />}
+            {activeTab === 'expenses' && <ExpensesView />}
+            {activeTab === 'accounts' && <AccountsView />}
+            {activeTab === 'investments' && <InvestmentsView />}
+            {activeTab === 'stats' && <StatsView />}
+          </main>
+        </div>
+      </div>
+
+      {/* Mobile Floating Bottom Dock */}
       <MobileNav />
 
-      {/* Global Modals */}
+      {/* Global Modals (Preserved 100%) */}
       <AddExpenseModal />
       <TransferModal />
       <AccountModal />
       <InvestmentModal />
-      <FirebaseSetupModal isOpen={isFirebaseSetupOpen} onClose={() => setIsFirebaseSetupOpen(false)} />
+      <FirebaseSetupModal
+        isOpen={isFirebaseSetupOpen}
+        onClose={() => setIsFirebaseSetupOpen(false)}
+      />
     </div>
   );
 };
