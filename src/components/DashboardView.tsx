@@ -30,6 +30,7 @@ export const DashboardView: React.FC = () => {
     usdIdrRate,
     setActiveTab,
     setIsAddExpenseOpen,
+    setTransactionInitialType,
     setIsTransferOpen,
     setTransferInitialMode,
     setIsAddInvestmentOpen,
@@ -125,11 +126,27 @@ export const DashboardView: React.FC = () => {
           {/* Clean Unified Action Pills */}
           <div className="flex flex-wrap items-center gap-2 pt-2 md:pt-0">
             <button
-              onClick={() => setIsAddExpenseOpen(true)}
+              onClick={() => {
+                setEditingTransaction(null);
+                setTransactionInitialType('expense');
+                setIsAddExpenseOpen(true);
+              }}
               className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs border border-slate-700/80 transition-all cursor-pointer"
             >
               <Receipt className="w-3.5 h-3.5 text-rose-400" />
               <span>+ Expense</span>
+            </button>
+
+            <button
+              onClick={() => {
+                setEditingTransaction(null);
+                setTransactionInitialType('income');
+                setIsAddExpenseOpen(true);
+              }}
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs border border-slate-700/80 transition-all cursor-pointer"
+            >
+              <ArrowDownRight className="w-3.5 h-3.5 text-emerald-400" />
+              <span>+ Income</span>
             </button>
 
             <button

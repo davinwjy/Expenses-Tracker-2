@@ -39,6 +39,7 @@ export const StatsView: React.FC = () => {
   const [rateInput, setRateInput] = useState(usdIdrRate.toString());
   const [rateSaved, setRateSaved] = useState(false);
   const [fetchToast, setFetchToast] = useState<string | null>(null);
+  const [categoryTab, setCategoryTab] = useState<'expense' | 'income'>('expense');
 
   useEffect(() => {
     setRateInput(usdIdrRate.toString());
@@ -79,8 +80,10 @@ export const StatsView: React.FC = () => {
   const liquidCash = stats?.totalLiquidCashIdr || 0;
   const totalInvestment = stats?.totalInvestmentValueIdr || 0;
   const expenseByCategory = stats?.expenseByCategory || {};
+  const incomeByCategory = stats?.incomeByCategory || {};
   const expenseByAccount = stats?.expenseByAccount || {};
   const monthlyExpenses = stats?.monthlyExpenses || 0;
+  const monthlyIncomes = stats?.monthlyIncomes || 0;
   const categoryAllocations = stats?.categoryAllocations || {};
 
   // Asset allocation percentages
@@ -214,49 +217,126 @@ export const StatsView: React.FC = () => {
 
       {/* TWO COLUMNS: MONTHLY EXPENSE CATEGORIES & FUNDING SOURCE BREAKDOWN */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Category Breakdown */}
+        {/* Category Breakdown (Toggleable between Expense & Income) */}
         <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <h3 className="font-bold text-white text-base">Expense Categories</h3>
-              <p className="text-xs text-slate-400">Current month spending distribution</p>
+              <h3 className="font-bold text-white text-base">
+                {categoryTab === 'expense' ? 'Expense Categories' : 'Income Categories'}
+              </h3>
+              <p className="text-xs text-slate-400">
+                {categoryTab === 'expense'
+                  ? 'Current month spending distribution'
+                  : 'Current month income source distribution'}
+              </p>
             </div>
-            <span className="text-xs font-mono font-bold text-rose-400">
-              {formatMasked(monthlyExpenses, 'IDR', isPrivacyMode)}
-            </span>
+            <div className="flex items-center gap-3">
+              {/* Mini Tab Switcher */}
+              <div className="flex p-0.5 bg-slate-950 rounded-lg border border-slate-800 text-[11px] font-semibold">
+                <button
+                  type="button"
+                  onClick={() => setCategoryTab('expense')}
+                  className={`px-2.5 py-1 rounded-md transition-all cursor-pointer ${
+                    categoryTab === 'expense'
+                      ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
+                      : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  Expenses
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setCategoryTab('income')}
+                  className={`px-2.5 py-1 rounded-md transition-all cursor-pointer ${
+                    categoryTab === 'income'
+                      ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                      : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  Income
+                </button>
+              </div>
+
+              <span
+                className={`text-xs font-mono font-bold ${
+                  categoryTab === 'expense' ? 'text-rose-400' : 'text-emerald-400'
+                }`}
+              >
+                {formatMasked(
+                  categoryTab === 'expense' ? monthlyExpenses : monthlyIncomes,
+                  'IDR',
+                  isPrivacyMode
+                )}
+              </span>
+            </div>
           </div>
 
-          {Object.keys(expenseByCategory).length === 0 ? (
-            <p className="text-xs text-slate-500 py-6 text-center">No expenses recorded this month.</p>
-          ) : (
-            <div className="space-y-3">
-              {Object.entries(expenseByCategory)
-                .sort((a, b) => b[1] - a[1])
-                .map(([category, amount]) => {
-                  const pct = monthlyExpenses > 0 ? (amount / monthlyExpenses) * 100 : 0;
-                  const color = CATEGORY_COLORS[category] || '#94a3b8';
+          {categoryTab === 'expense' ? (
+            Object.keys(expenseByCategory).length === 0 ? (
+              <p className="text-xs text-slate-500 py-6 text-center">No expenses recorded this month.</p>
+            ) : (
+              <div className="space-y-3">
+                {Object.entries(expenseByCategory)
+                  .sort((a, b) => b[1] - a[1])
+                  .map(([category, amount]) => {
+                    const pct = monthlyExpenses > 0 ? (amount / monthlyExpenses) * 100 : 0;
+                    const color = CATEGORY_COLORS[category] || '#f97316';
 
-                  return (
-                    <div key={category} className="space-y-1">
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="font-medium text-white">{category}</span>
-                        <div className="flex items-center gap-2">
-                          <span className="text-slate-400 font-mono">{pct.toFixed(1)}%</span>
-                          <span className="font-bold text-slate-200 font-mono">
-                            {formatMasked(amount, 'IDR', isPrivacyMode)}
-                          </span>
+                    return (
+                      <div key={category} className="space-y-1">
+                        <div className="flex items-center justify-between text-xs">
+                          <span className="font-medium text-white">{category}</span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-slate-400 font-mono">{pct.toFixed(1)}%</span>
+                            <span className="font-bold text-slate-200 font-mono">
+                              {formatMasked(amount, 'IDR', isPrivacyMode)}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="w-full h-2 rounded-full bg-slate-950 overflow-hidden">
+                          <div
+                            className="h-full rounded-full transition-all"
+                            style={{ width: `${pct}%`, backgroundColor: color }}
+                          />
                         </div>
                       </div>
-                      <div className="w-full h-2 rounded-full bg-slate-950 overflow-hidden">
-                        <div
-                          className="h-full rounded-full transition-all"
-                          style={{ width: `${pct}%`, backgroundColor: color }}
-                        />
+                    );
+                  })}
+              </div>
+            )
+          ) : (
+            Object.keys(incomeByCategory).length === 0 ? (
+              <p className="text-xs text-slate-500 py-6 text-center">No income recorded this month.</p>
+            ) : (
+              <div className="space-y-3">
+                {Object.entries(incomeByCategory)
+                  .sort((a, b) => b[1] - a[1])
+                  .map(([category, amount]) => {
+                    const pct = monthlyIncomes > 0 ? (amount / monthlyIncomes) * 100 : 0;
+                    const color = CATEGORY_COLORS[category] || '#10b981';
+
+                    return (
+                      <div key={category} className="space-y-1">
+                        <div className="flex items-center justify-between text-xs">
+                          <span className="font-medium text-white">{category}</span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-slate-400 font-mono">{pct.toFixed(1)}%</span>
+                            <span className="font-bold text-slate-200 font-mono">
+                              {formatMasked(amount, 'IDR', isPrivacyMode)}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="w-full h-2 rounded-full bg-slate-950 overflow-hidden">
+                          <div
+                            className="h-full rounded-full transition-all"
+                            style={{ width: `${pct}%`, backgroundColor: color }}
+                          />
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
-            </div>
+                    );
+                  })}
+              </div>
+            )
           )}
         </div>
 

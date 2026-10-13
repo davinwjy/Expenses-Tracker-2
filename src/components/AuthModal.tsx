@@ -56,27 +56,6 @@ export const AuthModal: React.FC = () => {
     }
   };
 
-  const handleBackupUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setError('');
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      try {
-        const content = event.target?.result as string;
-        const payload = JSON.parse(content);
-        importUserData(payload);
-        setSuccessMsg('Backup imported! Loading dashboard...');
-        setTimeout(() => {
-          window.location.reload();
-        }, 1200);
-      } catch (err: any) {
-        setError(err?.message || 'Failed to parse backup file');
-      }
-    };
-    reader.readAsText(file);
-  };
 
   const handleQuickDemo = async () => {
     setError('');

@@ -78,4 +78,5 @@ export interface DashboardStats {
   categoryAllocations: Record<string, { idrValue: number; usdValue: number; count: number }>;
   expenseByCategory: Record<string, number>;
   expenseByAccount: Record<string, { name: string; amount: number; type: string }>;
+  incomeByCategory?: Record<string, number>;
 }

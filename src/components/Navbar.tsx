@@ -7,6 +7,7 @@ import {
   ArrowRightLeft,
   TrendingUp,
   Receipt,
+  ArrowDownRight,
   LogOut,
   User as UserIcon,
   RefreshCw,
@@ -27,6 +28,7 @@ export const Navbar: React.FC = () => {
     refreshData,
     isLoading,
     setIsAddExpenseOpen,
+    setTransactionInitialType,
     setIsTransferOpen,
     setTransferInitialMode,
     setIsAddInvestmentOpen,
@@ -170,6 +172,7 @@ export const Navbar: React.FC = () => {
                       onClick={() => {
                         setIsNewMenuOpen(false);
                         setEditingTransaction(null);
+                        setTransactionInitialType('expense');
                         setIsAddExpenseOpen(true);
                       }}
                       className="w-full flex items-center gap-3 px-2.5 py-2 rounded-xl text-left hover:bg-slate-800/80 active:bg-slate-800 transition-colors group cursor-pointer"
@@ -180,6 +183,24 @@ export const Navbar: React.FC = () => {
                       <div className="min-w-0 flex-1">
                         <div className="text-xs font-semibold text-slate-100 group-hover:text-white">Record Expense</div>
                         <div className="text-[10px] text-slate-400 truncate">Log daily expense & deduct balance</div>
+                      </div>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setIsNewMenuOpen(false);
+                        setEditingTransaction(null);
+                        setTransactionInitialType('income');
+                        setIsAddExpenseOpen(true);
+                      }}
+                      className="w-full flex items-center gap-3 px-2.5 py-2 rounded-xl text-left hover:bg-slate-800/80 active:bg-slate-800 transition-colors group cursor-pointer"
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-emerald-500/15 border border-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 group-hover:scale-105 group-hover:bg-emerald-500/25 transition-all">
+                        <ArrowDownRight className="w-4 h-4" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="text-xs font-semibold text-slate-100 group-hover:text-white">Record Income</div>
+                        <div className="text-[10px] text-slate-400 truncate">Log salary, bonus, side gig & deposit</div>
                       </div>
                     </button>
 

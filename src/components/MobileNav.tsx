@@ -7,6 +7,7 @@ import {
   Plus,
   ArrowRightLeft,
   TrendingUp,
+  ArrowDownRight,
   X,
   Building2,
   Flame,
@@ -20,6 +21,7 @@ export const MobileNav: React.FC = () => {
     activeTab,
     setActiveTab,
     setIsAddExpenseOpen,
+    setTransactionInitialType,
     setIsTransferOpen,
     setTransferInitialMode,
     setIsAddInvestmentOpen,
@@ -60,6 +62,7 @@ export const MobileNav: React.FC = () => {
               onClick={() => {
                 setIsQuickMenuOpen(false);
                 setEditingTransaction(null);
+                setTransactionInitialType('expense');
                 setIsAddExpenseOpen(true);
               }}
               className="w-full flex items-center gap-3 p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-slate-100 transition-colors"
@@ -70,6 +73,24 @@ export const MobileNav: React.FC = () => {
               <div className="text-left">
                 <p className="text-xs font-bold text-white">Record Expense</p>
                 <p className="text-[11px] text-slate-400">Deduct from Bank or Cash</p>
+              </div>
+            </button>
+
+            <button
+              onClick={() => {
+                setIsQuickMenuOpen(false);
+                setEditingTransaction(null);
+                setTransactionInitialType('income');
+                setIsAddExpenseOpen(true);
+              }}
+              className="w-full flex items-center gap-3 p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-slate-100 transition-colors"
+            >
+              <div className="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+                <ArrowDownRight className="w-4 h-4" />
+              </div>
+              <div className="text-left">
+                <p className="text-xs font-bold text-white">Record Income</p>
+                <p className="text-[11px] text-slate-400">Salary, bonus, freelance deposit</p>
               </div>
             </button>
 

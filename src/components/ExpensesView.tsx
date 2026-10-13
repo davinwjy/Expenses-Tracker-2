@@ -14,7 +14,15 @@ import {
   CreditCard,
 } from 'lucide-react';
 import { useFinance } from '../context/FinanceContext';
-import { formatIdr, formatUsd, formatMasked, formatDate, CATEGORY_COLORS } from '../lib/formatters';
+import {
+  formatIdr,
+  formatUsd,
+  formatMasked,
+  formatDate,
+  CATEGORY_COLORS,
+  EXPENSE_CATEGORIES,
+  INCOME_CATEGORIES,
+} from '../lib/formatters';
 import { Transaction } from '../types';
 
 export const ExpensesView: React.FC = () => {
@@ -24,6 +32,7 @@ export const ExpensesView: React.FC = () => {
     investments,
     isPrivacyMode,
     setIsAddExpenseOpen,
+    setTransactionInitialType,
     setEditingTransaction,
     deleteTransaction,
   } = useFinance();
@@ -31,7 +40,25 @@ export const ExpensesView: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedAccountFilter, setSelectedAccountFilter] = useState<string>('all');
   const [selectedTypeFilter, setSelectedTypeFilter] = useState<string>('all');
+  const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<string>('all');
   const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  // Available categories based on selected type filter
+  const availableCategories = React.useMemo(() => {
+    if (selectedTypeFilter === 'expense') {
+      return [...EXPENSE_CATEGORIES];
+    }
+    if (selectedTypeFilter === 'income') {
+      return [...INCOME_CATEGORIES];
+    }
+    const set = new Set<string>();
+    EXPENSE_CATEGORIES.forEach((c) => set.add(c));
+    INCOME_CATEGORIES.forEach((c) => set.add(c));
+    transactions.forEach((t) => {
+      if (t.category) set.add(t.category);
+    });
+    return Array.from(set);
+  }, [selectedTypeFilter, transactions]);
 
   // Filter transactions
   const filteredTransactions = transactions.filter((tx) => {
@@ -53,6 +80,11 @@ export const ExpensesView: React.FC = () => {
     // Type filter
     if (selectedTypeFilter !== 'all') {
       if (tx.type !== selectedTypeFilter) return false;
+    }
+
+    // Category filter
+    if (selectedCategoryFilter !== 'all') {
+      if (tx.category !== selectedCategoryFilter) return false;
     }
 
     return true;
@@ -92,29 +124,44 @@ export const ExpensesView: React.FC = () => {
           </p>
         </div>
 
-        <button
-          onClick={() => {
-            setEditingTransaction(null);
-            setIsAddExpenseOpen(true);
-          }}
-          className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-rose-500 hover:bg-rose-400 text-white font-bold text-sm shadow-lg shadow-rose-500/25 transition-all cursor-pointer"
-        >
-          <Plus className="w-4 h-4 stroke-[2.5]" />
-          <span>Record New Expense</span>
-        </button>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={() => {
+              setEditingTransaction(null);
+              setTransactionInitialType('expense');
+              setIsAddExpenseOpen(true);
+            }}
+            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-rose-500 hover:bg-rose-400 text-white font-bold text-xs sm:text-sm shadow-lg shadow-rose-500/25 transition-all cursor-pointer"
+          >
+            <Plus className="w-4 h-4 stroke-[2.5]" />
+            <span>Record Expense</span>
+          </button>
+
+          <button
+            onClick={() => {
+              setEditingTransaction(null);
+              setTransactionInitialType('income');
+              setIsAddExpenseOpen(true);
+            }}
+            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs sm:text-sm shadow-lg shadow-emerald-500/25 transition-all cursor-pointer"
+          >
+            <Plus className="w-4 h-4 stroke-[2.5]" />
+            <span>Record Income</span>
+          </button>
+        </div>
       </div>
 
       {/* Filter and Summary Bar */}
       <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
         {/* Search & Dropdown Filters */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           <div className="relative">
             <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search category or notes..."
+              placeholder="Search notes or memo..."
               className="w-full bg-slate-950 border border-slate-800 focus:border-rose-500 rounded-xl pl-9 pr-3.5 py-2 text-xs sm:text-sm text-white placeholder-slate-600 focus:outline-none"
             />
             {searchQuery && (
@@ -145,7 +192,11 @@ export const ExpensesView: React.FC = () => {
           <div>
             <select
               value={selectedTypeFilter}
-              onChange={(e) => setSelectedTypeFilter(e.target.value)}
+              onChange={(e) => {
+                setSelectedTypeFilter(e.target.value);
+                // Reset category filter if it doesn't match new type
+                setSelectedCategoryFilter('all');
+              }}
               className="w-full bg-slate-950 border border-slate-800 focus:border-rose-500 rounded-xl px-3 py-2 text-xs sm:text-sm text-white focus:outline-none"
             >
               <option value="all">All Transaction Types</option>
@@ -153,6 +204,27 @@ export const ExpensesView: React.FC = () => {
               <option value="income">Incomes Only (+)</option>
               <option value="transfer">Bank &harr; Cash Transfers</option>
               <option value="bank_to_investment">Bank &rarr; Investments</option>
+            </select>
+          </div>
+
+          <div>
+            <select
+              value={selectedCategoryFilter}
+              onChange={(e) => setSelectedCategoryFilter(e.target.value)}
+              className="w-full bg-slate-950 border border-slate-800 focus:border-rose-500 rounded-xl px-3 py-2 text-xs sm:text-sm text-white focus:outline-none"
+            >
+              <option value="all">
+                {selectedTypeFilter === 'income'
+                  ? 'All Income Categories'
+                  : selectedTypeFilter === 'expense'
+                  ? 'All Expense Categories'
+                  : 'All Categories'}
+              </option>
+              {availableCategories.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
             </select>
           </div>
         </div>
@@ -228,7 +300,7 @@ export const ExpensesView: React.FC = () => {
                           ? `Moved to ${destAcc?.name || 'Cash'}`
                           : tx.category}
                       </span>
-                      {tx.type === 'expense' && (
+                      {(tx.type === 'expense' || tx.type === 'income') && tx.category && (
                         <span
                           className="text-[10px] px-2 py-0.5 rounded-full font-semibold text-slate-950"
                           style={{ backgroundColor: catColor }}

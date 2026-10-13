@@ -87,6 +87,8 @@ interface FinanceContextType {
   // Modal states
   isAddExpenseOpen: boolean;
   setIsAddExpenseOpen: (v: boolean) => void;
+  transactionInitialType: 'expense' | 'income';
+  setTransactionInitialType: (type: 'expense' | 'income') => void;
   isTransferOpen: boolean;
   setIsTransferOpen: (v: boolean) => void;
   transferInitialMode: 'account_to_account' | 'bank_to_investment';
@@ -136,6 +138,7 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
   // Modal states
   const [isAddExpenseOpen, setIsAddExpenseOpen] = useState(false);
+  const [transactionInitialType, setTransactionInitialType] = useState<'expense' | 'income'>('expense');
   const [isTransferOpen, setIsTransferOpen] = useState(false);
   const [transferInitialMode, setTransferInitialMode] = useState<'account_to_account' | 'bank_to_investment'>('account_to_account');
   const [isAddAccountOpen, setIsAddAccountOpen] = useState(false);
@@ -715,6 +718,8 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
         // Modal states
         isAddExpenseOpen,
         setIsAddExpenseOpen,
+        transactionInitialType,
+        setTransactionInitialType,
         isTransferOpen,
         setIsTransferOpen,
         transferInitialMode,

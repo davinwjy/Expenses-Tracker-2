@@ -1,26 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { X, Check, RotateCcw, PlusCircle, AlertCircle } from 'lucide-react';
+import { X, Check, RotateCcw, AlertCircle, ArrowDownRight, Receipt } from 'lucide-react';
 import { useFinance } from '../../context/FinanceContext';
-import { formatIdr } from '../../lib/formatters';
-
-const DEFAULT_CATEGORIES = [
-  'Food & Dining',
-  'Transportation',
-  'Groceries',
-  'Bills & Utilities',
-  'Shopping',
-  'Entertainment',
-  'Health & Fitness',
-  'Education',
-  'Housing & Rent',
-  'Personal Care',
-  'Other',
-];
+import { formatIdr, EXPENSE_CATEGORIES, INCOME_CATEGORIES } from '../../lib/formatters';
 
 export const AddExpenseModal: React.FC = () => {
   const {
     isAddExpenseOpen,
     setIsAddExpenseOpen,
+    transactionInitialType,
     accounts,
     addTransaction,
     editingTransaction,
@@ -31,7 +18,7 @@ export const AddExpenseModal: React.FC = () => {
   const [type, setType] = useState<'expense' | 'income'>('expense');
   const [amount, setAmount] = useState<string>('');
   const [accountId, setAccountId] = useState<string>('');
-  const [category, setCategory] = useState<string>('Food & Dining');
+  const [category, setCategory] = useState<string>(EXPENSE_CATEGORIES[0]);
   const [date, setDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [notes, setNotes] = useState<string>('');
   const [error, setError] = useState<string>('');
@@ -41,27 +28,52 @@ export const AddExpenseModal: React.FC = () => {
   useEffect(() => {
     if (isAddExpenseOpen) {
       if (editingTransaction) {
-        setType(editingTransaction.type === 'income' ? 'income' : 'expense');
+        const txType = editingTransaction.type === 'income' ? 'income' : 'expense';
+        setType(txType);
         setAmount(editingTransaction.amount.toString());
         setAccountId(editingTransaction.accountId);
-        setCategory(editingTransaction.category || 'Food & Dining');
+        const fallbackCat = txType === 'income' ? INCOME_CATEGORIES[0] : EXPENSE_CATEGORIES[0];
+        setCategory(editingTransaction.category || fallbackCat);
         setDate(editingTransaction.date);
         setNotes(editingTransaction.notes || '');
       } else {
-        resetForm();
+        const initType = transactionInitialType || 'expense';
+        setType(initType);
+        setAmount('');
+        setAccountId(accounts.length > 0 ? accounts[0].id : '');
+        setCategory(initType === 'income' ? INCOME_CATEGORIES[0] : EXPENSE_CATEGORIES[0]);
+        setDate(new Date().toISOString().split('T')[0]);
+        setNotes('');
       }
       setError('');
     }
-  }, [isAddExpenseOpen, editingTransaction, accounts]);
+  }, [isAddExpenseOpen, editingTransaction, accounts, transactionInitialType]);
 
   const resetForm = () => {
-    setType('expense');
+    const initType = transactionInitialType || 'expense';
+    setType(initType);
     setAmount('');
     setAccountId(accounts.length > 0 ? accounts[0].id : '');
-    setCategory('Food & Dining');
+    setCategory(initType === 'income' ? INCOME_CATEGORIES[0] : EXPENSE_CATEGORIES[0]);
     setDate(new Date().toISOString().split('T')[0]);
     setNotes('');
     setError('');
+  };
+
+  const handleTypeChange = (newType: 'expense' | 'income') => {
+    if (newType === type) return;
+    setType(newType);
+    if (newType === 'income') {
+      // Switch category if current category is not in income categories
+      if (!(INCOME_CATEGORIES as readonly string[]).includes(category)) {
+        setCategory(INCOME_CATEGORIES[0]);
+      }
+    } else {
+      // Switch category if current category is not in expense categories
+      if (!(EXPENSE_CATEGORIES as readonly string[]).includes(category)) {
+        setCategory(EXPENSE_CATEGORIES[0]);
+      }
+    }
   };
 
   const handleClose = () => {
@@ -122,6 +134,12 @@ export const AddExpenseModal: React.FC = () => {
 
   if (!isAddExpenseOpen) return null;
 
+  // Active categories for select dropdown
+  const activeCategories: readonly string[] = type === 'income' ? INCOME_CATEGORIES : EXPENSE_CATEGORIES;
+  const categoryOptions = activeCategories.includes(category)
+    ? [...activeCategories]
+    : [category, ...activeCategories];
+
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 overflow-hidden">
       {/* Backdrop */}
@@ -140,15 +158,33 @@ export const AddExpenseModal: React.FC = () => {
         {/* Sticky Header */}
         <div className="flex items-center justify-between px-4 py-3 sm:px-5 sm:py-4 border-b border-slate-800 bg-slate-950/70 shrink-0">
           <div className="flex items-center gap-2.5">
-            <div className={`w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center shrink-0 ${type === 'expense' ? 'bg-rose-500/20 text-rose-400' : 'bg-emerald-500/20 text-emerald-400'}`}>
-              <PlusCircle className="w-4 h-4 sm:w-5 sm:h-5" />
+            <div
+              className={`w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center shrink-0 ${
+                type === 'expense'
+                  ? 'bg-rose-500/20 text-rose-400'
+                  : 'bg-emerald-500/20 text-emerald-400'
+              }`}
+            >
+              {type === 'expense' ? (
+                <Receipt className="w-4 h-4 sm:w-5 sm:h-5" />
+              ) : (
+                <ArrowDownRight className="w-4 h-4 sm:w-5 sm:h-5" />
+              )}
             </div>
             <div>
               <h3 className="font-bold text-white text-sm sm:text-base leading-tight">
-                {editingTransaction ? 'Edit Transaction' : type === 'expense' ? 'Record Daily Expense' : 'Record Income'}
+                {editingTransaction
+                  ? editingTransaction.type === 'income'
+                    ? 'Edit Income Record'
+                    : 'Edit Expense Record'
+                  : type === 'expense'
+                  ? 'Record Daily Expense'
+                  : 'Record Income / Pemasukan'}
               </h3>
               <p className="text-[11px] sm:text-xs text-slate-400">
-                {type === 'expense' ? 'Deducts from chosen Bank or Cash' : 'Adds to chosen Bank or Cash'}
+                {type === 'expense'
+                  ? 'Deducts from chosen Bank or Cash'
+                  : 'Adds & credits to chosen Bank or Cash'}
               </p>
             </div>
           </div>
@@ -172,7 +208,11 @@ export const AddExpenseModal: React.FC = () => {
         </div>
 
         {/* Scrollable Form Body */}
-        <form id="expense-modal-form" onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 overscroll-contain">
+        <form
+          id="expense-modal-form"
+          onSubmit={handleSubmit}
+          className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 overscroll-contain"
+        >
           {error && (
             <div className="flex items-center gap-2 p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs">
               <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
@@ -181,35 +221,43 @@ export const AddExpenseModal: React.FC = () => {
           )}
 
           {/* Type Toggle */}
-          <div className="grid grid-cols-2 p-1 bg-slate-950 rounded-xl border border-slate-800 text-xs font-semibold">
-            <button
-              type="button"
-              onClick={() => setType('expense')}
-              className={`py-2 rounded-lg transition-all cursor-pointer ${
-                type === 'expense'
-                  ? 'bg-rose-500 text-white shadow'
-                  : 'text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              Expense (-)
-            </button>
-            <button
-              type="button"
-              onClick={() => setType('income')}
-              className={`py-2 rounded-lg transition-all cursor-pointer ${
-                type === 'income'
-                  ? 'bg-emerald-500 text-slate-950 shadow'
-                  : 'text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              Income (+)
-            </button>
+          <div>
+            <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
+              Transaction Type
+            </div>
+            <div className="grid grid-cols-2 p-1 bg-slate-950 rounded-xl border border-slate-800 text-xs font-semibold">
+              <button
+                type="button"
+                onClick={() => handleTypeChange('expense')}
+                className={`py-2 rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                  type === 'expense'
+                    ? 'bg-rose-500 text-white shadow'
+                    : 'text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                <Receipt className="w-3.5 h-3.5" />
+                <span>Expense (-)</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleTypeChange('income')}
+                className={`py-2 rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                  type === 'income'
+                    ? 'bg-emerald-500 text-slate-950 shadow'
+                    : 'text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                <ArrowDownRight className="w-3.5 h-3.5" />
+                <span>Income (+)</span>
+              </button>
+            </div>
           </div>
 
           {/* Amount in IDR */}
           <div>
             <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
-              Amount (IDR) <span className="text-rose-400">*</span>
+              {type === 'expense' ? 'Expense Amount (IDR)' : 'Income Amount (IDR)'}{' '}
+              <span className="text-rose-400">*</span>
             </label>
             <div className="relative">
               <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-bold text-slate-400">
@@ -230,12 +278,12 @@ export const AddExpenseModal: React.FC = () => {
 
             {/* Quick Increment Buttons */}
             <div className="flex flex-wrap gap-1.5 mt-2">
-              {[10000, 20000, 50000, 100000, 250000, 500000].map((inc) => (
+              {[10000, 50000, 100000, 250000, 500000, 1000000, 5000000].map((inc) => (
                 <button
                   key={inc}
                   type="button"
                   onClick={() => handleQuickAdd(inc)}
-                  className="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 active:bg-slate-600 text-xs font-medium text-slate-300 border border-slate-700 hover:border-slate-600 transition-colors cursor-pointer"
+                  className="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 active:bg-slate-600 text-xs font-medium text-slate-300 border border-slate-700 hover:border-slate-600 transition-colors cursor-pointer font-mono"
                 >
                   +{inc >= 1000000 ? `${inc / 1000000}M` : `${inc / 1000}k`}
                 </button>
@@ -246,7 +294,10 @@ export const AddExpenseModal: React.FC = () => {
           {/* Source Account (Bank / Cash) */}
           <div>
             <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
-              {type === 'expense' ? 'Source Account (Bank / Cash)' : 'Deposit Into (Bank / Cash)'} <span className="text-rose-400">*</span>
+              {type === 'expense'
+                ? 'Source Account (Deduct from)'
+                : 'Deposit Account (Receive into)'}{' '}
+              <span className="text-rose-400">*</span>
             </label>
             <select
               value={accountId}
@@ -263,22 +314,38 @@ export const AddExpenseModal: React.FC = () => {
             </select>
           </div>
 
-          {/* Category */}
+          {/* Category - Specific to Expense or Income */}
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
-              Category
-            </label>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400">
+                Category <span className="text-rose-400">*</span>
+              </label>
+              <span
+                className={`text-[10px] font-semibold px-2 py-0.5 rounded-md ${
+                  type === 'income'
+                    ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/25'
+                    : 'bg-rose-500/15 text-rose-400 border border-rose-500/25'
+                }`}
+              >
+                {type === 'income' ? 'Kategori Pemasukan' : 'Kategori Pengeluaran'}
+              </span>
+            </div>
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white focus:outline-none"
+              className="w-full bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white focus:outline-none font-medium"
             >
-              {DEFAULT_CATEGORIES.map((cat) => (
+              {categoryOptions.map((cat) => (
                 <option key={cat} value={cat}>
                   {cat}
                 </option>
               ))}
             </select>
+            <p className="text-[11px] text-slate-500 mt-1">
+              {type === 'income'
+                ? 'Pilih kategori sumber penghasilan (Gaji, Bonus, Freelance, Dividen, dll.)'
+                : 'Pilih pos alokasi pengeluaran bulanan (Makanan, Transport, Tagihan, dll.)'}
+            </p>
           </div>
 
           {/* Date & Notes */}
@@ -303,7 +370,11 @@ export const AddExpenseModal: React.FC = () => {
                 type="text"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                placeholder="e.g. Lunch with team, Taxi ride..."
+                placeholder={
+                  type === 'income'
+                    ? 'e.g. Monthly salary from PT..., Q1 bonus'
+                    : 'e.g. Lunch with team, Taxi ride...'
+                }
                 className="w-full bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-slate-600 focus:outline-none"
               />
             </div>
@@ -330,7 +401,17 @@ export const AddExpenseModal: React.FC = () => {
             } disabled:opacity-50`}
           >
             <Check className="w-4 h-4 stroke-[2.5]" />
-            <span>{isSubmitting ? 'Saving...' : editingTransaction ? 'Update' : 'Save Record'}</span>
+            <span>
+              {isSubmitting
+                ? 'Saving...'
+                : editingTransaction
+                ? type === 'income'
+                  ? 'Update Income'
+                  : 'Update Expense'
+                : type === 'income'
+                ? 'Save Income'
+                : 'Save Expense'}
+            </span>
           </button>
         </div>
       </div>

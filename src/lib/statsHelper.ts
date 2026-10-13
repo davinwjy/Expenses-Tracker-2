@@ -69,8 +69,16 @@ export function computeStats(
   thisMonthTxs
     .filter((t) => t.type === 'expense')
     .forEach((t) => {
-      const cat = t.category || 'Other';
+      const cat = t.category || 'Other Expense';
       expenseByCategory[cat] = (expenseByCategory[cat] || 0) + t.amount;
+    });
+
+  const incomeByCategory: Record<string, number> = {};
+  thisMonthTxs
+    .filter((t) => t.type === 'income')
+    .forEach((t) => {
+      const cat = t.category || 'Other Income';
+      incomeByCategory[cat] = (incomeByCategory[cat] || 0) + t.amount;
     });
 
   const expenseByAccount: Record<string, { name: string; amount: number; type: string }> = {};
@@ -102,5 +110,6 @@ export function computeStats(
     categoryAllocations,
     expenseByCategory,
     expenseByAccount,
+    incomeByCategory,
   };
 }

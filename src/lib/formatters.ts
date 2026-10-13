@@ -66,7 +66,38 @@ export function formatDate(dateStr: string): string {
   }
 }
 
+export const EXPENSE_CATEGORIES = [
+  'Food & Dining',
+  'Transportation',
+  'Groceries',
+  'Bills & Utilities',
+  'Shopping',
+  'Entertainment',
+  'Health & Fitness',
+  'Education',
+  'Housing & Rent',
+  'Personal Care',
+  'Family & Kids',
+  'Debt & Loans',
+  'Other Expense',
+] as const;
+
+export const INCOME_CATEGORIES = [
+  'Salary / Gaji',
+  'Bonus & Allowance',
+  'Freelance & Side Gig',
+  'Selling Items',
+  'Reimbursement',
+  'Investment Return / Dividen',
+  'Business Profit',
+  'Rental & Passive Income',
+  'Gift & Grants',
+  'Cashback & Refunds',
+  'Other Income',
+] as const;
+
 export const CATEGORY_COLORS: Record<string, string> = {
+  // Expense Categories
   'Food & Dining': '#f97316', // orange
   'Transportation': '#3b82f6', // blue
   'Groceries': '#10b981', // emerald
@@ -77,7 +108,24 @@ export const CATEGORY_COLORS: Record<string, string> = {
   'Education': '#6366f1', // indigo
   'Housing & Rent': '#64748b', // slate
   'Personal Care': '#f43f5e', // rose
+  'Family & Kids': '#fb923c', // amber-orange
+  'Debt & Loans': '#ef4444', // red
+  'Other Expense': '#94a3b8', // slate
   'Other': '#94a3b8',
+
+  // Income Categories
+  'Salary / Gaji': '#10b981', // emerald
+  'Bonus & Allowance': '#059669', // dark emerald
+  'Freelance & Side Gig': '#14b8a6', // teal
+  'Selling Items': '#f59e0b', // amber
+  'Selling Items / Jual Barang': '#f59e0b',
+  'Reimbursement': '#06b6d4', // cyan
+  'Investment Return / Dividen': '#0ea5e9', // sky
+  'Business Profit': '#3b82f6', // blue
+  'Rental & Passive Income': '#8b5cf6', // purple
+  'Gift & Grants': '#ec4899', // pink
+  'Cashback & Refunds': '#84cc16', // lime
+  'Other Income': '#34d399', // light green
 };
 
 export const INVESTMENT_CATEGORY_DETAILS: Record<
