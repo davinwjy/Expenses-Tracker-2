@@ -66,6 +66,9 @@ export interface Investment {
 export interface UserSettings {
   userId: string;
   usdIdrRate: number; // e.g. 15850
+  autoUpdateRate?: boolean;
+  rateLastUpdated?: string;
+  rateSource?: string;
   privacyModeDefault: boolean;
   theme: 'dark' | 'light';
 }

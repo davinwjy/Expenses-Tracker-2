@@ -11,6 +11,7 @@ import { useAuth } from './AuthContext';
 import { isFirebaseActive } from '../lib/firebase';
 import { firestoreService } from '../lib/firestoreService';
 import { computeStats } from '../lib/statsHelper';
+import { exchangeRateService } from '../lib/exchangeRateService';
 
 interface FinanceContextType {
   accounts: Account[];
@@ -19,6 +20,12 @@ interface FinanceContextType {
   stats: DashboardStats | null;
   settings: UserSettings | null;
   usdIdrRate: number;
+  rateSource: string;
+  rateLastUpdated: string | null;
+  isRateAutoUpdate: boolean;
+  setIsRateAutoUpdate: (enabled: boolean) => Promise<void>;
+  isRateFetching: boolean;
+  fetchLatestRate: (options?: { silent?: boolean }) => Promise<{ success: boolean; rate?: number }>;
   isLoading: boolean;
   isPrivacyMode: boolean;
   togglePrivacyMode: () => void;
@@ -75,7 +82,7 @@ interface FinanceContextType {
   deleteInvestment: (id: string) => Promise<void>;
 
   // Settings
-  updateRate: (newRate: number) => Promise<void>;
+  updateRate: (newRate: number, source?: string) => Promise<void>;
 
   // Modal states
   isAddExpenseOpen: boolean;
@@ -94,8 +101,6 @@ interface FinanceContextType {
   setEditingInvestment: (i: Investment | null) => void;
   editingTransaction: Transaction | null;
   setEditingTransaction: (t: Transaction | null) => void;
-  isSyncModalOpen: boolean;
-  setIsSyncModalOpen: (v: boolean) => void;
   isFirebaseSetupOpen: boolean;
   setIsFirebaseSetupOpen: (v: boolean) => void;
 }
@@ -111,6 +116,16 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [settings, setSettings] = useState<UserSettings | null>(null);
   const [usdIdrRate, setUsdIdrRate] = useState<number>(15850);
+  const [rateSource, setRateSource] = useState<string>(() => {
+    return exchangeRateService.getLastRateInfo().source;
+  });
+  const [rateLastUpdated, setRateLastUpdated] = useState<string | null>(() => {
+    return exchangeRateService.getLastRateInfo().timestamp;
+  });
+  const [isRateAutoUpdate, setIsRateAutoUpdateState] = useState<boolean>(() => {
+    return exchangeRateService.getAutoUpdateEnabled();
+  });
+  const [isRateFetching, setIsRateFetching] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<'dashboard' | 'expenses' | 'accounts' | 'investments' | 'stats'>('dashboard');
 
@@ -129,7 +144,6 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [editingAccount, setEditingAccount] = useState<Account | null>(null);
   const [editingInvestment, setEditingInvestment] = useState<Investment | null>(null);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
-  const [isSyncModalOpen, setIsSyncModalOpen] = useState(false);
   const [isFirebaseSetupOpen, setIsFirebaseSetupOpen] = useState(false);
 
   const togglePrivacyMode = () => {
@@ -159,6 +173,12 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
       setSettings(data.settings);
       const rate = data.settings?.usdIdrRate || 15850;
       setUsdIdrRate(rate);
+      if (data.settings?.rateSource) setRateSource(data.settings.rateSource);
+      if (data.settings?.rateLastUpdated) setRateLastUpdated(data.settings.rateLastUpdated);
+      if (data.settings?.autoUpdateRate !== undefined) {
+        setIsRateAutoUpdateState(data.settings.autoUpdateRate);
+        exchangeRateService.setAutoUpdateEnabled(data.settings.autoUpdateRate);
+      }
 
       const computed = computeStats(data.accounts, data.transactions, normalizedInvestments, rate);
       setStats(computed);
@@ -196,6 +216,12 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
       setSettings(setRes.settings);
       if (setRes.settings?.usdIdrRate) {
         setUsdIdrRate(setRes.settings.usdIdrRate);
+      }
+      if (setRes.settings?.rateSource) setRateSource(setRes.settings.rateSource);
+      if (setRes.settings?.rateLastUpdated) setRateLastUpdated(setRes.settings.rateLastUpdated);
+      if (setRes.settings?.autoUpdateRate !== undefined) {
+        setIsRateAutoUpdateState(setRes.settings.autoUpdateRate);
+        exchangeRateService.setAutoUpdateEnabled(setRes.settings.autoUpdateRate);
       }
     } catch (err) {
       console.error('Failed to load finance data:', err);
@@ -517,16 +543,139 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
     await refreshData();
   };
 
-  const updateRate = async (newRate: number) => {
+  // Fetch latest rate from Google Finance / market feeds
+  const fetchLatestRate = useCallback(async (options?: { silent?: boolean }) => {
+    if (!options?.silent) {
+      setIsRateFetching(true);
+    }
+    try {
+      const res = await exchangeRateService.fetchUsdIdrRate();
+      const newRate = res.rate;
+      const src = res.source;
+      const ts = res.timestamp;
+
+      setUsdIdrRate(newRate);
+      setRateSource(src);
+      setRateLastUpdated(ts);
+
+      // Recompute stats with new rate
+      setStats((prevStats) => {
+        if (!prevStats && accounts.length === 0 && investments.length === 0) return prevStats;
+        return computeStats(accounts, transactions, investments, newRate);
+      });
+
+      if (isFirebase && user) {
+        if (settings) {
+          await firestoreService.saveSettings({
+            ...settings,
+            usdIdrRate: newRate,
+            rateSource: src,
+            rateLastUpdated: ts,
+            autoUpdateRate: isRateAutoUpdate,
+          });
+        }
+      } else {
+        await api.updateSettings({
+          usdIdrRate: newRate,
+          rateSource: src,
+          rateLastUpdated: ts,
+          autoUpdateRate: isRateAutoUpdate,
+        });
+      }
+
+      return { success: true, rate: newRate };
+    } catch (err: any) {
+      console.warn('Failed to fetch latest exchange rate:', err);
+      return { success: false, error: err?.message || 'Failed to fetch rate' };
+    } finally {
+      setIsRateFetching(false);
+    }
+  }, [accounts, transactions, investments, isFirebase, user, settings, isRateAutoUpdate]);
+
+  // Auto update every 12 hours from Google Finance / market feeds
+  useEffect(() => {
+    if (!isRateAutoUpdate) return;
+    const TWELVE_HOURS_MS = 12 * 60 * 60 * 1000; // 12 hours
+
+    // Check on mount if never fetched or older than 12 hours
+    const checkOnMount = () => {
+      const last = rateLastUpdated ? new Date(rateLastUpdated).getTime() : 0;
+      const now = Date.now();
+      if (now - last >= TWELVE_HOURS_MS) {
+        fetchLatestRate({ silent: true });
+      }
+    };
+    checkOnMount();
+
+    // Set recurring 12-hour timer (43,200,000 ms)
+    const intervalId = setInterval(() => {
+      fetchLatestRate({ silent: true });
+    }, TWELVE_HOURS_MS);
+
+    // Refresh when tab gains focus if stale (> 12 hours)
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') {
+        const last = rateLastUpdated ? new Date(rateLastUpdated).getTime() : 0;
+        if (Date.now() - last >= TWELVE_HOURS_MS) {
+          fetchLatestRate({ silent: true });
+        }
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    return () => {
+      clearInterval(intervalId);
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
+  }, [isRateAutoUpdate, rateLastUpdated, fetchLatestRate]);
+
+  const setIsRateAutoUpdate = async (enabled: boolean) => {
+    setIsRateAutoUpdateState(enabled);
+    exchangeRateService.setAutoUpdateEnabled(enabled);
+
+    if (isFirebase && user && settings) {
+      await firestoreService.saveSettings({
+        ...settings,
+        autoUpdateRate: enabled,
+      });
+    } else {
+      await api.updateSettings({ autoUpdateRate: enabled });
+    }
+
+    if (enabled) {
+      fetchLatestRate();
+    }
+  };
+
+  const updateRate = async (newRate: number, source: string = 'Manual Custom') => {
+    const ts = new Date().toISOString();
     setUsdIdrRate(newRate);
+    setRateSource(source);
+    setRateLastUpdated(ts);
+    exchangeRateService.saveLastRateInfo({ source, timestamp: ts });
+
+    setStats((prevStats) => {
+      if (!prevStats && accounts.length === 0 && investments.length === 0) return prevStats;
+      return computeStats(accounts, transactions, investments, newRate);
+    });
+
     if (isFirebase && user) {
       if (settings) {
-        await firestoreService.saveSettings({ ...settings, usdIdrRate: newRate });
+        await firestoreService.saveSettings({
+          ...settings,
+          usdIdrRate: newRate,
+          rateSource: source,
+          rateLastUpdated: ts,
+        });
       }
       return;
     }
 
-    await api.updateSettings({ usdIdrRate: newRate });
+    await api.updateSettings({
+      usdIdrRate: newRate,
+      rateSource: source,
+      rateLastUpdated: ts,
+    });
     await refreshData();
   };
 
@@ -539,6 +688,12 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
         stats,
         settings,
         usdIdrRate,
+        rateSource,
+        rateLastUpdated,
+        isRateAutoUpdate,
+        setIsRateAutoUpdate,
+        isRateFetching,
+        fetchLatestRate,
         isLoading,
         isPrivacyMode,
         togglePrivacyMode,
@@ -574,8 +729,6 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
         setEditingInvestment,
         editingTransaction,
         setEditingTransaction,
-        isSyncModalOpen,
-        setIsSyncModalOpen,
         isFirebaseSetupOpen,
         setIsFirebaseSetupOpen,
       }}

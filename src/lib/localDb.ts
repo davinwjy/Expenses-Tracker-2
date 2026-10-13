@@ -715,6 +715,9 @@ export const localDb = {
     }
 
     if (data.usdIdrRate !== undefined) s.usdIdrRate = Number(data.usdIdrRate);
+    if (data.autoUpdateRate !== undefined) s.autoUpdateRate = Boolean(data.autoUpdateRate);
+    if (data.rateLastUpdated !== undefined) s.rateLastUpdated = String(data.rateLastUpdated);
+    if (data.rateSource !== undefined) s.rateSource = String(data.rateSource);
     if (data.privacyModeDefault !== undefined) s.privacyModeDefault = data.privacyModeDefault;
     if (data.theme !== undefined) s.theme = data.theme;
 

@@ -15,7 +15,6 @@ import {
   Globe,
   Clock,
   Sparkles,
-  Smartphone,
 } from 'lucide-react';
 import { useFinance } from '../context/FinanceContext';
 import { formatIdr, formatUsd, formatMasked, formatDate } from '../lib/formatters';
@@ -36,7 +35,6 @@ export const DashboardView: React.FC = () => {
     setIsAddInvestmentOpen,
     setIsAddAccountOpen,
     setEditingTransaction,
-    setIsSyncModalOpen,
   } = useFinance();
 
   const netWorthIdr = stats?.totalNetWorthIdr || 0;
@@ -154,14 +152,6 @@ export const DashboardView: React.FC = () => {
             >
               <ArrowRightLeft className="w-3.5 h-3.5 text-blue-400" />
               <span>Transfer</span>
-            </button>
-
-            <button
-              onClick={() => setIsSyncModalOpen(true)}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-indigo-950/70 hover:bg-indigo-900/80 text-indigo-300 font-semibold text-xs border border-indigo-800/60 transition-all cursor-pointer"
-            >
-              <Smartphone className="w-3.5 h-3.5 text-indigo-400" />
-              <span>Sync to Phone</span>
             </button>
           </div>
         </div>

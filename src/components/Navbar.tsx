@@ -10,16 +10,12 @@ import {
   LogOut,
   User as UserIcon,
   RefreshCw,
-  SlidersHorizontal,
   ChevronDown,
   Building2,
-  Check,
-  Smartphone,
   Flame,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useFinance } from '../context/FinanceContext';
-import { formatIdr } from '../lib/formatters';
 
 export const Navbar: React.FC = () => {
   const { user, logout, isFirebase } = useAuth();
@@ -28,8 +24,6 @@ export const Navbar: React.FC = () => {
     setActiveTab,
     isPrivacyMode,
     togglePrivacyMode,
-    usdIdrRate,
-    updateRate,
     refreshData,
     isLoading,
     setIsAddExpenseOpen,
@@ -40,15 +34,11 @@ export const Navbar: React.FC = () => {
     setEditingTransaction,
     setEditingInvestment,
     setEditingAccount,
-    setIsSyncModalOpen,
     setIsFirebaseSetupOpen,
   } = useFinance();
 
   const [isNewMenuOpen, setIsNewMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const [isEditingRate, setIsEditingRate] = useState(false);
-  const [newRateInput, setNewRateInput] = useState(usdIdrRate.toString());
-  const [rateUpdatedToast, setRateUpdatedToast] = useState(false);
 
   const newMenuRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
@@ -61,25 +51,11 @@ export const Navbar: React.FC = () => {
       }
       if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
         setIsUserMenuOpen(false);
-        setIsEditingRate(false);
       }
     }
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
-
-  const handleSaveRate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const parsed = Number(newRateInput);
-    if (!isNaN(parsed) && parsed > 0) {
-      await updateRate(parsed);
-      setRateUpdatedToast(true);
-      setTimeout(() => {
-        setRateUpdatedToast(false);
-        setIsEditingRate(false);
-      }, 1500);
-    }
-  };
 
   const navItems = [
     { id: 'dashboard', label: 'Dashboard' },
@@ -151,16 +127,6 @@ export const Navbar: React.FC = () => {
                   <span className="hidden sm:inline">Privacy</span>
                 </>
               )}
-            </button>
-
-            {/* Sync to Phone Button */}
-            <button
-              onClick={() => setIsSyncModalOpen(true)}
-              title="Sync to Phone / Link Mobile Device"
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold border bg-slate-900 border-slate-800 text-indigo-300 hover:text-white hover:bg-indigo-600/20 hover:border-indigo-500/40 transition-all cursor-pointer"
-            >
-              <Smartphone className="w-3.5 h-3.5 text-indigo-400" />
-              <span className="hidden md:inline">Sync Phone</span>
             </button>
 
             {/* Realtime Firebase Cloud Sync Button */}
@@ -318,71 +284,6 @@ export const Navbar: React.FC = () => {
                     <p className="text-[11px] text-slate-400 truncate">{user?.email}</p>
                   </div>
 
-                  {/* Currency Rate Controller */}
-                  <div className="p-2 rounded-lg bg-slate-950/60 border border-slate-800/80 my-1">
-                    <div className="flex items-center justify-between text-[11px] text-slate-400 mb-1.5">
-                      <span>USD / IDR Rate:</span>
-                      <span className="font-semibold text-emerald-400 font-mono">
-                        {formatIdr(usdIdrRate).replace('Rp ', '')}
-                      </span>
-                    </div>
-
-                    {!isEditingRate ? (
-                      <button
-                        onClick={() => {
-                          setNewRateInput(usdIdrRate.toString());
-                          setIsEditingRate(true);
-                        }}
-                        className="w-full text-center py-1 text-[11px] text-slate-400 hover:text-white hover:bg-slate-800/60 rounded cursor-pointer"
-                      >
-                        Adjust Rate
-                      </button>
-                    ) : (
-                      <form onSubmit={handleSaveRate} className="space-y-1.5 pt-0.5">
-                        <div className="relative">
-                          <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] text-slate-400">Rp</span>
-                          <input
-                            type="number"
-                            value={newRateInput}
-                            onChange={(e) => setNewRateInput(e.target.value)}
-                            className="w-full bg-slate-900 border border-slate-700 rounded px-2 pl-6 py-1 text-xs text-white font-mono focus:outline-none focus:border-emerald-500"
-                            autoFocus
-                          />
-                        </div>
-                        <div className="flex items-center justify-end gap-1.5">
-                          <button
-                            type="button"
-                            onClick={() => setIsEditingRate(false)}
-                            className="px-2 py-0.5 text-[10px] text-slate-400 hover:text-white"
-                          >
-                            Cancel
-                          </button>
-                          <button
-                            type="submit"
-                            className="px-2.5 py-0.5 bg-emerald-500 text-slate-950 font-bold text-[10px] rounded"
-                          >
-                            {rateUpdatedToast ? 'Saved!' : 'Save'}
-                          </button>
-                        </div>
-                      </form>
-                    )}
-                  </div>
-
-                  {/* Sync to Phone Modal */}
-                  <button
-                    onClick={() => {
-                      setIsUserMenuOpen(false);
-                      setIsSyncModalOpen(true);
-                    }}
-                    className="w-full flex items-center justify-between px-2.5 py-2 text-xs text-indigo-300 hover:bg-indigo-500/10 rounded-lg cursor-pointer transition-colors"
-                  >
-                    <span className="flex items-center gap-2">
-                      <Smartphone className="w-3.5 h-3.5 text-indigo-400" />
-                      <span className="font-semibold">📱 Sync to Phone</span>
-                    </span>
-                    <span className="text-[10px] bg-indigo-500/20 text-indigo-300 px-1.5 py-0.5 rounded font-mono">Link</span>
-                  </button>
-
                   {/* Firebase Real-Time Cloud Sync Modal */}
                   <button
                     onClick={() => {
@@ -406,7 +307,7 @@ export const Navbar: React.FC = () => {
                     </span>
                   </button>
 
-                  {/* Sync action */}
+                  {/* Refresh Cloud Data */}
                   <button
                     onClick={() => {
                       refreshData();
@@ -418,7 +319,7 @@ export const Navbar: React.FC = () => {
                       <RefreshCw className={`w-3.5 h-3.5 text-slate-400 ${isLoading ? 'animate-spin text-emerald-400' : ''}`} />
                       <span>Sync Data</span>
                     </span>
-                    <span className="text-[10px] text-slate-400">Auto</span>
+                    <span className="text-[10px] text-slate-400">Cloud</span>
                   </button>
 
                   <div className="border-t border-slate-800 my-1" />

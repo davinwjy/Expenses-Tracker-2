@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   PieChart,
   TrendingUp,
@@ -12,6 +12,9 @@ import {
   Globe,
   Wallet,
   Check,
+  RefreshCw,
+  Clock,
+  Sparkles,
 } from 'lucide-react';
 import { useFinance } from '../context/FinanceContext';
 import { formatIdr, formatUsd, formatMasked, CATEGORY_COLORS } from '../lib/formatters';
@@ -24,19 +27,51 @@ export const StatsView: React.FC = () => {
     isPrivacyMode,
     togglePrivacyMode,
     usdIdrRate,
+    rateSource,
+    rateLastUpdated,
+    isRateAutoUpdate,
+    setIsRateAutoUpdate,
+    isRateFetching,
+    fetchLatestRate,
     updateRate,
   } = useFinance();
 
   const [rateInput, setRateInput] = useState(usdIdrRate.toString());
   const [rateSaved, setRateSaved] = useState(false);
+  const [fetchToast, setFetchToast] = useState<string | null>(null);
+
+  useEffect(() => {
+    setRateInput(usdIdrRate.toString());
+  }, [usdIdrRate]);
 
   const handleUpdateRate = async (e: React.FormEvent) => {
     e.preventDefault();
     const val = Number(rateInput);
     if (!isNaN(val) && val > 0) {
-      await updateRate(val);
+      await updateRate(val, 'Manual Custom');
       setRateSaved(true);
       setTimeout(() => setRateSaved(false), 2000);
+    }
+  };
+
+  const handleFetchNow = async () => {
+    const res = await fetchLatestRate();
+    if (res.success && res.rate) {
+      setFetchToast(`Live Google rate: Rp ${Math.round(res.rate).toLocaleString('id-ID')}`);
+      setTimeout(() => setFetchToast(null), 3500);
+    } else {
+      setFetchToast('Failed to fetch from Google');
+      setTimeout(() => setFetchToast(null), 3500);
+    }
+  };
+
+  const formatLastUpdated = (iso?: string | null) => {
+    if (!iso) return 'Not synced yet';
+    try {
+      const date = new Date(iso);
+      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' (' + date.toLocaleDateString([], { month: 'short', day: 'numeric' }) + ')';
+    } catch {
+      return iso;
     }
   };
 
@@ -270,35 +305,120 @@ export const StatsView: React.FC = () => {
 
       {/* SYSTEM & EXCHANGE RATE SETTINGS */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* USD / IDR Exchange Rate */}
-        <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-3">
-          <div className="flex items-center gap-2 text-white font-bold text-sm">
-            <SlidersHorizontal className="w-4 h-4 text-emerald-400" />
-            <span>USD / IDR Exchange Rate Setting</span>
-          </div>
-          <p className="text-xs text-slate-400">
-            Used to calculate net worth and convert US ETF and USD holdings into IDR equivalents.
-          </p>
-
-          <form onSubmit={handleUpdateRate} className="flex items-center gap-2 pt-1">
-            <div className="relative flex-1">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-400">1 USD = Rp</span>
-              <input
-                type="number"
-                value={rateInput}
-                onChange={(e) => setRateInput(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-24 pr-3 py-2 text-sm text-white font-mono focus:outline-none focus:border-emerald-500"
-                required
-              />
+        {/* USD / IDR Exchange Rate Setting */}
+        <div className="p-5 sm:p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
+          <div className="flex items-start justify-between gap-2">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2 text-white font-bold text-sm">
+                <SlidersHorizontal className="w-4 h-4 text-emerald-400" />
+                <span>USD / IDR Exchange Rate Setting</span>
+              </div>
+              <p className="text-xs text-slate-400">
+                Used to calculate net worth and convert US ETF and USD holdings into IDR equivalents.
+              </p>
             </div>
+
+            {/* Live Source Badge */}
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-[11px] font-semibold shrink-0">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span>{rateSource || 'Google Finance'}</span>
+            </div>
+          </div>
+
+          {/* Rate Highlight Card */}
+          <div className="p-4 rounded-xl bg-slate-950/70 border border-slate-800/80 space-y-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <span className="text-[11px] font-medium text-slate-400 uppercase tracking-wider">Current Market Rate</span>
+                <div className="flex items-baseline gap-2 mt-0.5">
+                  <span className="text-xl sm:text-2xl font-black font-mono text-white">
+                    Rp {Math.round(usdIdrRate).toLocaleString('id-ID')}
+                  </span>
+                  <span className="text-xs font-semibold text-slate-400">/ 1 USD</span>
+                </div>
+              </div>
+
+              {/* One-click Refresh Button */}
+              <button
+                type="button"
+                onClick={handleFetchNow}
+                disabled={isRateFetching}
+                className="self-start sm:self-center flex items-center gap-2 px-3 py-2 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 text-emerald-300 font-bold text-xs transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 ${isRateFetching ? 'animate-spin' : ''}`} />
+                <span>{isRateFetching ? 'Fetching Google...' : 'Refresh from Google'}</span>
+              </button>
+            </div>
+
+            {/* Status & Timestamp */}
+            <div className="pt-2 border-t border-slate-900 flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-400">
+              <div className="flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5 text-slate-500" />
+                <span>Last updated: <strong className="text-slate-300">{formatLastUpdated(rateLastUpdated)}</strong></span>
+              </div>
+              {fetchToast && (
+                <span className="text-emerald-400 font-medium animate-in fade-in">
+                  ✓ {fetchToast}
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Auto-Update Every 12 Hours Toggle */}
+          <div className="p-3.5 rounded-xl bg-slate-950/40 border border-slate-800/60 flex items-center justify-between gap-3">
+            <div className="space-y-0.5">
+              <div className="flex items-center gap-1.5 text-xs font-bold text-white">
+                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                <span>Auto-update every 12 hours</span>
+              </div>
+              <p className="text-[11px] text-slate-400">
+                Pulls live rates from Google in the background every 12 hours and keeps portfolio values synchronized.
+              </p>
+            </div>
+
             <button
-              type="submit"
-              className="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold rounded-xl flex items-center gap-1.5 cursor-pointer shadow-md"
+              type="button"
+              onClick={() => setIsRateAutoUpdate(!isRateAutoUpdate)}
+              role="switch"
+              aria-checked={isRateAutoUpdate}
+              className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                isRateAutoUpdate ? 'bg-emerald-500' : 'bg-slate-800'
+              }`}
             >
-              {rateSaved && <Check className="w-3.5 h-3.5 stroke-[2.5]" />}
-              <span>{rateSaved ? 'Updated!' : 'Update Rate'}</span>
+              <span
+                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                  isRateAutoUpdate ? 'translate-x-5' : 'translate-x-0'
+                }`}
+              />
             </button>
-          </form>
+          </div>
+
+          {/* Manual Rate Override Form */}
+          <div className="pt-1 border-t border-slate-800/60">
+            <div className="flex items-center justify-between text-xs text-slate-400 mb-2">
+              <span>Manual Custom Rate:</span>
+              <span className="text-[11px] text-slate-500">Overrides live rate until next auto-sync</span>
+            </div>
+            <form onSubmit={handleUpdateRate} className="flex items-center gap-2">
+              <div className="relative flex-1">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-400">1 USD = Rp</span>
+                <input
+                  type="number"
+                  value={rateInput}
+                  onChange={(e) => setRateInput(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-24 pr-3 py-2 text-sm text-white font-mono focus:outline-none focus:border-emerald-500"
+                  required
+                />
+              </div>
+              <button
+                type="submit"
+                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 cursor-pointer shadow-md transition-all shrink-0"
+              >
+                {rateSaved ? <Check className="w-3.5 h-3.5 text-emerald-400 stroke-[2.5]" /> : null}
+                <span>{rateSaved ? 'Saved!' : 'Set Custom'}</span>
+              </button>
+            </form>
+          </div>
         </div>
 
         {/* Privacy & Safe Mode Toggle Card */}

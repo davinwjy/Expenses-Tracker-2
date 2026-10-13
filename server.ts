@@ -862,7 +862,7 @@ app.get('/api/settings', authenticateToken, (req: AuthenticatedRequest, res: Res
 app.put('/api/settings', authenticateToken, (req: AuthenticatedRequest, res: Response): void => {
   try {
     const userId = req.user!.id;
-    const { usdIdrRate, privacyModeDefault, theme } = req.body;
+    const { usdIdrRate, autoUpdateRate, rateLastUpdated, rateSource, privacyModeDefault, theme } = req.body;
 
     let setting = db.data.settings.find(s => s.userId === userId);
     if (!setting) {
@@ -878,6 +878,15 @@ app.put('/api/settings', authenticateToken, (req: AuthenticatedRequest, res: Res
     if (usdIdrRate !== undefined && !isNaN(Number(usdIdrRate)) && Number(usdIdrRate) > 0) {
       setting.usdIdrRate = Number(usdIdrRate);
     }
+    if (autoUpdateRate !== undefined) {
+      setting.autoUpdateRate = Boolean(autoUpdateRate);
+    }
+    if (rateLastUpdated !== undefined) {
+      setting.rateLastUpdated = String(rateLastUpdated);
+    }
+    if (rateSource !== undefined) {
+      setting.rateSource = String(rateSource);
+    }
     if (privacyModeDefault !== undefined) {
       setting.privacyModeDefault = Boolean(privacyModeDefault);
     }
@@ -889,6 +898,58 @@ app.put('/api/settings', authenticateToken, (req: AuthenticatedRequest, res: Res
     res.json({ settings: setting });
   } catch (err) {
     res.status(500).json({ error: 'Failed to update settings' });
+  }
+});
+
+// Live USD/IDR exchange rate from Google Finance
+app.get('/api/exchange-rate/usd-idr', async (_req: Request, res: Response): Promise<void> => {
+  try {
+    // 1. Fetch live quote from Google Finance
+    try {
+      const gRes = await fetch('https://www.google.com/finance/quote/USD-IDR', {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+          'Accept-Language': 'en-US,en;q=0.9',
+        },
+      });
+      if (gRes.ok) {
+        const html = await gRes.text();
+        const match = html.match(/\"USD \/ IDR\",\s*\d+,\s*null,\s*\[([0-9.]+)/);
+        if (match && match[1]) {
+          const parsedRate = parseFloat(match[1]);
+          if (!isNaN(parsedRate) && parsedRate > 0) {
+            res.json({
+              rate: parsedRate,
+              source: 'Google Finance',
+              timestamp: new Date().toISOString(),
+              success: true,
+            });
+            return;
+          }
+        }
+      }
+    } catch (gErr) {
+      console.warn('Google Finance direct fetch warning:', gErr);
+    }
+
+    // 2. Resilient fallback to open exchange rate API
+    const fallbackRes = await fetch('https://open.er-api.com/v6/latest/USD');
+    if (fallbackRes.ok) {
+      const data = (await fallbackRes.json()) as any;
+      if (data && data.rates && typeof data.rates.IDR === 'number') {
+        res.json({
+          rate: Number(data.rates.IDR),
+          source: 'Google / Live Market (ER-API)',
+          timestamp: new Date().toISOString(),
+          success: true,
+        });
+        return;
+      }
+    }
+
+    res.status(500).json({ error: 'Could not fetch live rate' });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message || 'Exchange rate fetch error' });
   }
 });
 
