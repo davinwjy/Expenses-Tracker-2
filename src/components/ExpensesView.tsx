@@ -237,13 +237,13 @@ export const ExpensesView: React.FC = () => {
       {/* Header & Main CTAs */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2">
+          <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
             <span>Expenses & Transactions</span>
-            <span className="text-xs px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-300 font-semibold">
+            <span className="text-xs px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold border border-slate-200 dark:border-slate-700">
               {filteredTransactions.length}
             </span>
           </h2>
-          <p className="text-xs sm:text-sm text-slate-400">
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
             Track daily living expenses with Bank and Cash funding sources
           </p>
         </div>
@@ -255,7 +255,7 @@ export const ExpensesView: React.FC = () => {
               setTransactionInitialType('expense');
               setIsAddExpenseOpen(true);
             }}
-            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-rose-500 hover:bg-rose-400 text-white font-bold text-xs sm:text-sm shadow-lg shadow-rose-500/25 transition-all cursor-pointer"
+            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs sm:text-sm shadow-md shadow-rose-500/25 transition-all cursor-pointer"
           >
             <Plus className="w-4 h-4 stroke-[2.5]" />
             <span>Record Expense</span>
@@ -267,7 +267,7 @@ export const ExpensesView: React.FC = () => {
               setTransactionInitialType('income');
               setIsAddExpenseOpen(true);
             }}
-            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs sm:text-sm shadow-lg shadow-emerald-500/25 transition-all cursor-pointer"
+            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs sm:text-sm shadow-md shadow-emerald-500/25 transition-all cursor-pointer"
           >
             <Plus className="w-4 h-4 stroke-[2.5]" />
             <span>Record Income</span>
@@ -276,7 +276,7 @@ export const ExpensesView: React.FC = () => {
       </div>
 
       {/* Filter and Summary Bar */}
-      <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
+      <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
         {/* Search & Dropdown Primary Filters */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           <div className="relative">
@@ -286,12 +286,12 @@ export const ExpensesView: React.FC = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search notes or memo..."
-              className="w-full bg-slate-950 border border-slate-800 focus:border-rose-500 rounded-xl pl-9 pr-8 py-2 text-xs sm:text-sm text-white placeholder-slate-600 focus:outline-none"
+              className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-rose-500 rounded-xl pl-9 pr-8 py-2 text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-600 focus:outline-none"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white cursor-pointer"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-white cursor-pointer"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
@@ -302,7 +302,7 @@ export const ExpensesView: React.FC = () => {
             <select
               value={selectedAccountFilter}
               onChange={(e) => setSelectedAccountFilter(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 focus:border-rose-500 rounded-xl px-3 py-2 text-xs sm:text-sm text-white focus:outline-none cursor-pointer"
+              className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-rose-500 rounded-xl px-3 py-2 text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none cursor-pointer"
             >
               <option value="all">All Accounts (Banks & Cash)</option>
               {accounts.map((acc) => (
@@ -320,7 +320,7 @@ export const ExpensesView: React.FC = () => {
                 setSelectedTypeFilter(e.target.value);
                 setSelectedCategoryFilter('all');
               }}
-              className="w-full bg-slate-950 border border-slate-800 focus:border-rose-500 rounded-xl px-3 py-2 text-xs sm:text-sm text-white focus:outline-none cursor-pointer"
+              className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-rose-500 rounded-xl px-3 py-2 text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none cursor-pointer"
             >
               <option value="all">All Transaction Types</option>
               <option value="expense">Expenses Only (-)</option>
@@ -334,7 +334,7 @@ export const ExpensesView: React.FC = () => {
             <select
               value={selectedCategoryFilter}
               onChange={(e) => setSelectedCategoryFilter(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 focus:border-rose-500 rounded-xl px-3 py-2 text-xs sm:text-sm text-white focus:outline-none cursor-pointer"
+              className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-rose-500 rounded-xl px-3 py-2 text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none cursor-pointer"
             >
               <option value="all">
                 {selectedTypeFilter === 'income'
@@ -353,12 +353,12 @@ export const ExpensesView: React.FC = () => {
         </div>
 
         {/* Date, Month & Year Filters */}
-        <div className="pt-3 border-t border-slate-800/80 space-y-3">
+        <div className="pt-3 border-t border-slate-200 dark:border-slate-800/80 space-y-3">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
             {/* Quick Period Presets */}
             <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mr-1 flex items-center gap-1 shrink-0">
-                <Calendar className="w-3.5 h-3.5 text-emerald-400" />
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mr-1 flex items-center gap-1 shrink-0">
+                <Calendar className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" />
                 Period:
               </span>
               <button
@@ -367,7 +367,7 @@ export const ExpensesView: React.FC = () => {
                 className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-colors shrink-0 cursor-pointer ${
                   datePreset === 'all' && selectedYear === 'all' && selectedMonth === 'all' && !selectedDate
                     ? 'bg-emerald-500 text-slate-950 font-bold'
-                    : 'bg-slate-950 text-slate-400 hover:text-slate-200 border border-slate-800'
+                    : 'bg-slate-100 dark:bg-slate-950 text-slate-700 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 border border-slate-200 dark:border-slate-800'
                 }`}
               >
                 All Time
@@ -378,7 +378,7 @@ export const ExpensesView: React.FC = () => {
                 className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-colors shrink-0 cursor-pointer ${
                   datePreset === 'today' || (selectedDate && selectedDate === getTodayStr())
                     ? 'bg-emerald-500 text-slate-950 font-bold'
-                    : 'bg-slate-950 text-slate-400 hover:text-slate-200 border border-slate-800'
+                    : 'bg-slate-100 dark:bg-slate-950 text-slate-700 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 border border-slate-200 dark:border-slate-800'
                 }`}
               >
                 Today
@@ -389,7 +389,7 @@ export const ExpensesView: React.FC = () => {
                 className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-colors shrink-0 cursor-pointer ${
                   datePreset === 'this_month'
                     ? 'bg-emerald-500 text-slate-950 font-bold'
-                    : 'bg-slate-950 text-slate-400 hover:text-slate-200 border border-slate-800'
+                    : 'bg-slate-100 dark:bg-slate-950 text-slate-700 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 border border-slate-200 dark:border-slate-800'
                 }`}
               >
                 This Month
@@ -400,7 +400,7 @@ export const ExpensesView: React.FC = () => {
                 className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-colors shrink-0 cursor-pointer ${
                   datePreset === 'this_year'
                     ? 'bg-emerald-500 text-slate-950 font-bold'
-                    : 'bg-slate-950 text-slate-400 hover:text-slate-200 border border-slate-800'
+                    : 'bg-slate-100 dark:bg-slate-950 text-slate-700 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 border border-slate-200 dark:border-slate-800'
                 }`}
               >
                 This Year
@@ -412,7 +412,7 @@ export const ExpensesView: React.FC = () => {
               <button
                 type="button"
                 onClick={handleResetFilters}
-                className="text-xs text-rose-400 hover:text-rose-300 font-medium flex items-center gap-1 self-start sm:self-auto cursor-pointer"
+                className="text-xs text-rose-500 dark:text-rose-400 hover:text-rose-600 dark:hover:text-rose-300 font-medium flex items-center gap-1 self-start sm:self-auto cursor-pointer"
               >
                 <X className="w-3.5 h-3.5" />
                 <span>Reset Filters</span>
@@ -424,13 +424,13 @@ export const ExpensesView: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             {/* Year Selector */}
             <div>
-              <label className="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1">
+              <label className="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">
                 Filter by Year
               </label>
               <select
                 value={selectedYear}
                 onChange={(e) => handleYearChange(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded-xl px-3 py-2 text-xs sm:text-sm text-white focus:outline-none cursor-pointer"
+                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-emerald-500 rounded-xl px-3 py-2 text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none cursor-pointer"
               >
                 <option value="all">All Years</option>
                 {availableYears.map((yr) => (
@@ -443,13 +443,13 @@ export const ExpensesView: React.FC = () => {
 
             {/* Month Selector */}
             <div>
-              <label className="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1">
+              <label className="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">
                 Filter by Month
               </label>
               <select
                 value={selectedMonth}
                 onChange={(e) => handleMonthChange(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded-xl px-3 py-2 text-xs sm:text-sm text-white focus:outline-none cursor-pointer"
+                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-emerald-500 rounded-xl px-3 py-2 text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none cursor-pointer"
               >
                 <option value="all">All Months</option>
                 {MONTH_OPTIONS.map((m) => (
@@ -463,7 +463,7 @@ export const ExpensesView: React.FC = () => {
             {/* Specific Exact Date Picker */}
             <div>
               <div className="flex items-center justify-between mb-1">
-                <label className="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
+                <label className="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                   Specific Date
                 </label>
                 {selectedDate && (
@@ -473,7 +473,7 @@ export const ExpensesView: React.FC = () => {
                       setSelectedDate('');
                       setDatePreset('custom');
                     }}
-                    className="text-[10px] text-rose-400 hover:text-rose-300 cursor-pointer flex items-center gap-0.5"
+                    className="text-[10px] text-rose-500 dark:text-rose-400 hover:text-rose-600 dark:hover:text-rose-300 cursor-pointer flex items-center gap-0.5"
                   >
                     <X className="w-2.5 h-2.5" />
                     <span>Clear</span>
@@ -484,26 +484,26 @@ export const ExpensesView: React.FC = () => {
                 type="date"
                 value={selectedDate}
                 onChange={(e) => handleDateChange(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded-xl px-3 py-2 text-xs sm:text-sm text-white focus:outline-none [color-scheme:dark] cursor-pointer"
+                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-emerald-500 rounded-xl px-3 py-2 text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none cursor-pointer"
               />
             </div>
           </div>
         </div>
 
         {/* Filtered Summary Badges */}
-        <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-800/80 text-xs">
+        <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-200 dark:border-slate-800/80 text-xs">
           <div className="flex flex-wrap items-center gap-4">
             <div className="flex items-center gap-2">
-              <span className="text-slate-400">Total Expenses:</span>
-              <span className="font-bold text-rose-400 font-mono text-sm">
+              <span className="text-slate-500 dark:text-slate-400">Total Expenses:</span>
+              <span className="font-bold text-rose-600 dark:text-rose-400 font-mono text-sm">
                 {formatMasked(totalFilteredExpense, 'IDR', isPrivacyMode)}
               </span>
             </div>
 
             {totalFilteredIncome > 0 && (
               <div className="flex items-center gap-2">
-                <span className="text-slate-400">Total Incomes:</span>
-                <span className="font-bold text-emerald-400 font-mono text-sm">
+                <span className="text-slate-500 dark:text-slate-400">Total Incomes:</span>
+                <span className="font-bold text-emerald-600 dark:text-emerald-400 font-mono text-sm">
                   {formatMasked(totalFilteredIncome, 'IDR', isPrivacyMode)}
                 </span>
               </div>
@@ -511,13 +511,13 @@ export const ExpensesView: React.FC = () => {
           </div>
 
           {/* Active Period / Filter summary tag */}
-          <div className="flex items-center gap-2 text-slate-400 text-[11px] flex-wrap">
+          <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 text-[11px] flex-wrap">
             <span>
-              Showing <strong className="text-slate-200">{filteredTransactions.length}</strong> of{' '}
-              <strong className="text-slate-200">{transactions.length}</strong>
+              Showing <strong className="text-slate-800 dark:text-slate-200">{filteredTransactions.length}</strong> of{' '}
+              <strong className="text-slate-800 dark:text-slate-200">{transactions.length}</strong>
             </span>
             {(selectedYear !== 'all' || selectedMonth !== 'all' || selectedDate) && (
-              <span className="px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium">
+              <span className="px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 font-medium">
                 {selectedDate
                   ? formatDate(selectedDate)
                   : `${
@@ -534,19 +534,19 @@ export const ExpensesView: React.FC = () => {
       {/* Transactions List */}
       <div className="space-y-2.5">
         {filteredTransactions.length === 0 ? (
-          <div className="p-12 text-center rounded-2xl bg-slate-900 border border-slate-800">
-            <Receipt className="w-12 h-12 text-slate-600 mx-auto mb-3" />
-            <h3 className="font-bold text-white text-base">No transactions found</h3>
-            <p className="text-xs text-slate-400 mt-1">
+          <div className="p-12 text-center rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+            <Receipt className="w-12 h-12 text-slate-400 dark:text-slate-600 mx-auto mb-3" />
+            <h3 className="font-bold text-slate-900 dark:text-white text-base">No transactions found</h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
               Try adjusting your date, month, year, or search filters.
             </p>
             {isAnyFilterActive && (
               <button
                 type="button"
                 onClick={handleResetFilters}
-                className="mt-3.5 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold cursor-pointer transition-colors"
+                className="mt-3.5 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold cursor-pointer transition-colors"
               >
-                <X className="w-3.5 h-3.5 text-rose-400" />
+                <X className="w-3.5 h-3.5 text-rose-500" />
                 <span>Reset All Filters</span>
               </button>
             )}
@@ -561,19 +561,19 @@ export const ExpensesView: React.FC = () => {
             return (
               <div
                 key={tx.id}
-                className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-2xl bg-slate-900 border border-slate-800 hover:border-slate-700 transition-all gap-3"
+                className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 shadow-sm transition-all gap-3"
               >
                 <div className="flex items-start sm:items-center gap-3.5">
                   {/* Icon */}
                   <div
                     className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
                       tx.type === 'expense'
-                        ? 'bg-rose-500/15 text-rose-400'
+                        ? 'bg-rose-500/15 text-rose-600 dark:text-rose-400'
                         : tx.type === 'income'
-                        ? 'bg-emerald-500/15 text-emerald-400'
+                        ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400'
                         : tx.type === 'bank_to_investment'
-                        ? 'bg-indigo-500/15 text-indigo-400'
-                        : 'bg-blue-500/15 text-blue-400'
+                        ? 'bg-indigo-500/15 text-indigo-600 dark:text-indigo-400'
+                        : 'bg-blue-500/15 text-blue-600 dark:text-blue-400'
                     }`}
                   >
                     {tx.type === 'expense' && <Receipt className="w-5 h-5" />}
@@ -585,7 +585,7 @@ export const ExpensesView: React.FC = () => {
                   {/* Details */}
                   <div className="space-y-0.5">
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="font-bold text-white text-sm sm:text-base">
+                      <span className="font-bold text-slate-900 dark:text-white text-sm sm:text-base">
                         {tx.type === 'bank_to_investment'
                           ? `Funded ${targetInv?.name || 'Investment'}`
                           : tx.type === 'transfer'
@@ -600,25 +600,25 @@ export const ExpensesView: React.FC = () => {
                           {tx.category}
                         </span>
                       )}
-                      <span className="text-[10px] px-2 py-0.2 rounded font-bold uppercase tracking-wider bg-slate-800 text-slate-400 border border-slate-700">
+                      <span className="text-[10px] px-2 py-0.2 rounded font-bold uppercase tracking-wider bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
                         {tx.type.replace(/_/g, ' ')}
                       </span>
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-2 text-xs text-slate-400">
+                    <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
                       <span className="flex items-center gap-1">
-                        <CreditCard className="w-3 h-3 text-slate-500" />
+                        <CreditCard className="w-3 h-3 text-slate-400 dark:text-slate-500" />
                         {sourceAcc?.name || 'Account'}
                       </span>
                       <span>•</span>
                       <span className="flex items-center gap-1 font-mono">
-                        <Calendar className="w-3 h-3 text-slate-500" />
+                        <Calendar className="w-3 h-3 text-slate-400 dark:text-slate-500" />
                         {formatDate(tx.date)}
                       </span>
                       {tx.notes && (
                         <>
                           <span>•</span>
-                          <span className="italic text-slate-300">"{tx.notes}"</span>
+                          <span className="italic text-slate-600 dark:text-slate-300">"{tx.notes}"</span>
                         </>
                       )}
                     </div>
@@ -626,24 +626,24 @@ export const ExpensesView: React.FC = () => {
                 </div>
 
                 {/* Amount & Actions */}
-                <div className="flex items-center justify-between sm:justify-end gap-4 pl-12 sm:pl-0 border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-800/80">
+                <div className="flex items-center justify-between sm:justify-end gap-4 pl-12 sm:pl-0 border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-100 dark:border-slate-800/80">
                   <div className="text-left sm:text-right">
                     <span
                       className={`text-base sm:text-lg font-black font-mono ${
                         tx.type === 'expense'
-                          ? 'text-rose-400'
+                          ? 'text-rose-600 dark:text-rose-400'
                           : tx.type === 'income'
-                          ? 'text-emerald-400'
+                          ? 'text-emerald-600 dark:text-emerald-400'
                           : tx.type === 'bank_to_investment'
-                          ? 'text-indigo-400'
-                          : 'text-blue-400'
+                          ? 'text-indigo-600 dark:text-indigo-400'
+                          : 'text-blue-600 dark:text-blue-400'
                       }`}
                     >
                       {tx.type === 'expense' ? '-' : tx.type === 'income' ? '+' : ''}
                       {formatMasked(tx.amount, 'IDR', isPrivacyMode)}
                     </span>
                     {tx.type === 'bank_to_investment' && tx.amountUsd && (
-                      <p className="text-xs text-slate-400 font-mono">
+                      <p className="text-xs text-slate-500 dark:text-slate-400 font-mono">
                         +{formatUsd(tx.amountUsd)}
                       </p>
                     )}
@@ -656,7 +656,7 @@ export const ExpensesView: React.FC = () => {
                           setEditingTransaction(tx);
                           setIsAddExpenseOpen(true);
                         }}
-                        className="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors cursor-pointer"
+                        className="p-2 text-slate-400 hover:text-slate-700 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
                         title="Edit transaction"
                       >
                         <Edit2 className="w-3.5 h-3.5" />
@@ -667,13 +667,13 @@ export const ExpensesView: React.FC = () => {
                       <div className="flex items-center gap-1">
                         <button
                           onClick={() => handleDelete(tx.id)}
-                          className="px-2 py-1 bg-rose-600 hover:bg-rose-700 text-white text-[11px] font-bold rounded-lg"
+                          className="px-2 py-1 bg-rose-600 hover:bg-rose-700 text-white text-[11px] font-bold rounded-lg cursor-pointer"
                         >
                           Confirm
                         </button>
                         <button
                           onClick={() => setDeletingId(null)}
-                          className="px-1.5 py-1 text-slate-400 text-[11px]"
+                          className="px-1.5 py-1 text-slate-500 dark:text-slate-400 text-[11px] cursor-pointer"
                         >
                           Cancel
                         </button>
@@ -681,7 +681,7 @@ export const ExpensesView: React.FC = () => {
                     ) : (
                       <button
                         onClick={() => setDeletingId(tx.id)}
-                        className="p-2 text-slate-500 hover:text-rose-400 rounded-lg hover:bg-rose-500/10 transition-colors cursor-pointer"
+                        className="p-2 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 rounded-lg hover:bg-rose-500/10 transition-colors cursor-pointer"
                         title="Delete transaction"
                       >
                         <Trash2 className="w-3.5 h-3.5" />

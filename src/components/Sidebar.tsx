@@ -164,7 +164,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   WealthTrack
                 </span>
                 <span className="text-[10px] font-bold px-1.5 py-0.2 rounded-md bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 tracking-wider">
-                  SaaS
+                  PRO
                 </span>
               </div>
               <p className="text-[11px] text-slate-400 truncate">Private Wealth OS</p>

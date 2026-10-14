@@ -12,6 +12,8 @@ import {
   Building2,
   Flame,
   Shield,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import { useFinance } from '../context/FinanceContext';
 import { useAuth } from '../context/AuthContext';
@@ -22,6 +24,8 @@ export const MobileNav: React.FC = () => {
   const {
     activeTab,
     setActiveTab,
+    theme,
+    toggleTheme,
     setIsAddExpenseOpen,
     setTransactionInitialType,
     setIsTransferOpen,
@@ -177,6 +181,24 @@ export const MobileNav: React.FC = () => {
             >
               <Flame className="w-3.5 h-3.5 text-amber-400" />
               <span>{isFirebase ? '🔥 Firebase Cloud Active' : '🔥 Hubungkan Firebase Cloud'}</span>
+            </button>
+            <button
+              onClick={() => {
+                toggleTheme();
+              }}
+              className="col-span-2 py-2.5 px-3 rounded-xl text-xs font-semibold text-center flex items-center justify-center gap-2 border bg-slate-900 border-slate-800 text-slate-300 hover:text-white cursor-pointer"
+            >
+              {theme === 'dark' ? (
+                <>
+                  <Sun className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Ganti ke Mode Terang (Light Mode)</span>
+                </>
+              ) : (
+                <>
+                  <Moon className="w-3.5 h-3.5 text-indigo-400" />
+                  <span>Ganti ke Mode Gelap (Dark Mode)</span>
+                </>
+              )}
             </button>
           </div>
         </div>

@@ -98,33 +98,33 @@ export const StatsView: React.FC = () => {
     <div className="space-y-6 animate-in fade-in pb-12">
       {/* Header */}
       <div>
-        <h2 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2">
+        <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
           <span>Financial Statistics & Analytics</span>
         </h2>
-        <p className="text-xs sm:text-sm text-slate-400">
+        <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
           In-depth asset allocation, spending patterns, and exchange rate configuration
         </p>
       </div>
 
       {/* ASSET ALLOCATION BREAKDOWN */}
-      <div className="p-5 sm:p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-5">
+      <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-5">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="font-bold text-white text-base flex items-center gap-2">
-              <Layers className="w-5 h-5 text-emerald-400" />
+            <h3 className="font-bold text-slate-900 dark:text-white text-base flex items-center gap-2">
+              <Layers className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
               <span>Comprehensive Asset Allocation</span>
             </h3>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-500 dark:text-slate-400">
               Distribution of your total net worth across liquid and investment classes
             </p>
           </div>
-          <span className="text-xs font-mono font-bold text-slate-300">
+          <span className="text-xs font-mono font-bold text-slate-700 dark:text-slate-300">
             Total: {formatMasked(netWorth, 'IDR', isPrivacyMode)}
           </span>
         </div>
 
         {/* Multi-segment Progress Bar */}
-        <div className="w-full h-4 rounded-full bg-slate-950 overflow-hidden flex border border-slate-800">
+        <div className="w-full h-4 rounded-full bg-slate-100 dark:bg-slate-950 overflow-hidden flex border border-slate-200 dark:border-slate-800">
           <div style={{ width: `${cashPercent}%` }} className="bg-sky-500 h-full transition-all" title={`Cash & Banks: ${cashPercent.toFixed(1)}%`} />
           <div style={{ width: `${sahamPercent}%` }} className="bg-blue-600 h-full transition-all" title={`Saham: ${sahamPercent.toFixed(1)}%`} />
           <div style={{ width: `${rdpuPercent}%` }} className="bg-teal-500 h-full transition-all" title={`RDPU: ${rdpuPercent.toFixed(1)}%`} />
@@ -135,80 +135,80 @@ export const StatsView: React.FC = () => {
 
         {/* Legend Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 pt-2">
-          <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800">
-            <div className="flex items-center gap-1.5 text-xs text-sky-400 font-semibold mb-1">
+          <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800">
+            <div className="flex items-center gap-1.5 text-xs text-sky-600 dark:text-sky-400 font-semibold mb-1">
               <div className="w-2.5 h-2.5 rounded-full bg-sky-500" />
               <span>Cash & Banks</span>
             </div>
-            <p className="text-sm font-bold text-white font-mono">
+            <p className="text-sm font-bold text-slate-900 dark:text-white font-mono">
               {cashPercent.toFixed(1)}%
             </p>
-            <p className="text-[11px] text-slate-400 font-mono mt-0.5">
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 font-mono mt-0.5">
               {formatMasked(liquidCash, 'IDR', isPrivacyMode)}
             </p>
           </div>
 
-          <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800">
-            <div className="flex items-center gap-1.5 text-xs text-blue-400 font-semibold mb-1">
+          <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800">
+            <div className="flex items-center gap-1.5 text-xs text-blue-600 dark:text-blue-400 font-semibold mb-1">
               <div className="w-2.5 h-2.5 rounded-full bg-blue-600" />
               <span>Saham (ID)</span>
             </div>
-            <p className="text-sm font-bold text-white font-mono">
+            <p className="text-sm font-bold text-slate-900 dark:text-white font-mono">
               {sahamPercent.toFixed(1)}%
             </p>
-            <p className="text-[11px] text-slate-400 font-mono mt-0.5">
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 font-mono mt-0.5">
               {formatMasked(categoryAllocations['Saham']?.idrValue || 0, 'IDR', isPrivacyMode)}
             </p>
           </div>
 
-          <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800">
-            <div className="flex items-center gap-1.5 text-xs text-teal-400 font-semibold mb-1">
+          <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800">
+            <div className="flex items-center gap-1.5 text-xs text-teal-600 dark:text-teal-400 font-semibold mb-1">
               <div className="w-2.5 h-2.5 rounded-full bg-teal-500" />
               <span>RDPU (Fund)</span>
             </div>
-            <p className="text-sm font-bold text-white font-mono">
+            <p className="text-sm font-bold text-slate-900 dark:text-white font-mono">
               {rdpuPercent.toFixed(1)}%
             </p>
-            <p className="text-[11px] text-slate-400 font-mono mt-0.5">
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 font-mono mt-0.5">
               {formatMasked(categoryAllocations['RDPU']?.idrValue || 0, 'IDR', isPrivacyMode)}
             </p>
           </div>
 
-          <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800">
-            <div className="flex items-center gap-1.5 text-xs text-amber-400 font-semibold mb-1">
+          <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800">
+            <div className="flex items-center gap-1.5 text-xs text-amber-600 dark:text-amber-400 font-semibold mb-1">
               <div className="w-2.5 h-2.5 rounded-full bg-amber-500" />
               <span>Bitcoin (Crypto)</span>
             </div>
-            <p className="text-sm font-bold text-white font-mono">
+            <p className="text-sm font-bold text-slate-900 dark:text-white font-mono">
               {btcPercent.toFixed(1)}%
             </p>
-            <p className="text-[11px] text-slate-400 font-mono mt-0.5">
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 font-mono mt-0.5">
               {formatMasked(categoryAllocations['Bitcoin']?.idrValue || 0, 'IDR', isPrivacyMode)}
             </p>
           </div>
 
-          <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800">
-            <div className="flex items-center gap-1.5 text-xs text-purple-400 font-semibold mb-1">
+          <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800">
+            <div className="flex items-center gap-1.5 text-xs text-purple-600 dark:text-purple-400 font-semibold mb-1">
               <div className="w-2.5 h-2.5 rounded-full bg-purple-500" />
               <span>ETF USA</span>
             </div>
-            <p className="text-sm font-bold text-white font-mono">
+            <p className="text-sm font-bold text-slate-900 dark:text-white font-mono">
               {etfPercent.toFixed(1)}%
             </p>
-            <p className="text-[11px] text-slate-400 font-mono mt-0.5">
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 font-mono mt-0.5">
               {formatMasked(categoryAllocations['ETF USA']?.idrValue || 0, 'IDR', isPrivacyMode)}
             </p>
           </div>
 
-          <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800">
-            <div className="flex items-center gap-1.5 text-xs text-emerald-400 font-semibold mb-1">
+          <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800">
+            <div className="flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400 font-semibold mb-1">
               <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
               <span>USD Cash</span>
             </div>
-            <p className="text-sm font-bold text-white font-mono">
+            <p className="text-sm font-bold text-slate-900 dark:text-white font-mono">
               {usdPercent.toFixed(1)}%
             </p>
-            <p className="text-[11px] text-slate-400 font-mono mt-0.5">
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 font-mono mt-0.5">
               {formatMasked(categoryAllocations['USD']?.idrValue || 0, 'IDR', isPrivacyMode)}
             </p>
           </div>
@@ -218,13 +218,13 @@ export const StatsView: React.FC = () => {
       {/* TWO COLUMNS: MONTHLY EXPENSE CATEGORIES & FUNDING SOURCE BREAKDOWN */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Category Breakdown (Toggleable between Expense & Income) */}
-        <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
+        <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <h3 className="font-bold text-white text-base">
+              <h3 className="font-bold text-slate-900 dark:text-white text-base">
                 {categoryTab === 'expense' ? 'Expense Categories' : 'Income Categories'}
               </h3>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500 dark:text-slate-400">
                 {categoryTab === 'expense'
                   ? 'Current month spending distribution'
                   : 'Current month income source distribution'}
@@ -232,14 +232,14 @@ export const StatsView: React.FC = () => {
             </div>
             <div className="flex items-center gap-3">
               {/* Mini Tab Switcher */}
-              <div className="flex p-0.5 bg-slate-950 rounded-lg border border-slate-800 text-[11px] font-semibold">
+              <div className="flex p-0.5 bg-slate-100 dark:bg-slate-950 rounded-lg border border-slate-200 dark:border-slate-800 text-[11px] font-semibold">
                 <button
                   type="button"
                   onClick={() => setCategoryTab('expense')}
                   className={`px-2.5 py-1 rounded-md transition-all cursor-pointer ${
                     categoryTab === 'expense'
-                      ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
-                      : 'text-slate-400 hover:text-slate-200'
+                      ? 'bg-rose-500/15 dark:bg-rose-500/20 text-rose-700 dark:text-rose-300 border border-rose-500/30'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
                   }`}
                 >
                   Expenses
@@ -249,8 +249,8 @@ export const StatsView: React.FC = () => {
                   onClick={() => setCategoryTab('income')}
                   className={`px-2.5 py-1 rounded-md transition-all cursor-pointer ${
                     categoryTab === 'income'
-                      ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                      : 'text-slate-400 hover:text-slate-200'
+                      ? 'bg-emerald-500/15 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
                   }`}
                 >
                   Income
@@ -259,7 +259,7 @@ export const StatsView: React.FC = () => {
 
               <span
                 className={`text-xs font-mono font-bold ${
-                  categoryTab === 'expense' ? 'text-rose-400' : 'text-emerald-400'
+                  categoryTab === 'expense' ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400'
                 }`}
               >
                 {formatMasked(
@@ -273,7 +273,7 @@ export const StatsView: React.FC = () => {
 
           {categoryTab === 'expense' ? (
             Object.keys(expenseByCategory).length === 0 ? (
-              <p className="text-xs text-slate-500 py-6 text-center">No expenses recorded this month.</p>
+              <p className="text-xs text-slate-400 dark:text-slate-500 py-6 text-center">No expenses recorded this month.</p>
             ) : (
               <div className="space-y-3">
                 {Object.entries(expenseByCategory)
@@ -285,15 +285,15 @@ export const StatsView: React.FC = () => {
                     return (
                       <div key={category} className="space-y-1">
                         <div className="flex items-center justify-between text-xs">
-                          <span className="font-medium text-white">{category}</span>
+                          <span className="font-medium text-slate-900 dark:text-white">{category}</span>
                           <div className="flex items-center gap-2">
-                            <span className="text-slate-400 font-mono">{pct.toFixed(1)}%</span>
-                            <span className="font-bold text-slate-200 font-mono">
+                            <span className="text-slate-500 dark:text-slate-400 font-mono">{pct.toFixed(1)}%</span>
+                            <span className="font-bold text-slate-800 dark:text-slate-200 font-mono">
                               {formatMasked(amount, 'IDR', isPrivacyMode)}
                             </span>
                           </div>
                         </div>
-                        <div className="w-full h-2 rounded-full bg-slate-950 overflow-hidden">
+                        <div className="w-full h-2 rounded-full bg-slate-100 dark:bg-slate-950 overflow-hidden">
                           <div
                             className="h-full rounded-full transition-all"
                             style={{ width: `${pct}%`, backgroundColor: color }}
@@ -306,7 +306,7 @@ export const StatsView: React.FC = () => {
             )
           ) : (
             Object.keys(incomeByCategory).length === 0 ? (
-              <p className="text-xs text-slate-500 py-6 text-center">No income recorded this month.</p>
+              <p className="text-xs text-slate-400 dark:text-slate-500 py-6 text-center">No income recorded this month.</p>
             ) : (
               <div className="space-y-3">
                 {Object.entries(incomeByCategory)
@@ -318,15 +318,15 @@ export const StatsView: React.FC = () => {
                     return (
                       <div key={category} className="space-y-1">
                         <div className="flex items-center justify-between text-xs">
-                          <span className="font-medium text-white">{category}</span>
+                          <span className="font-medium text-slate-900 dark:text-white">{category}</span>
                           <div className="flex items-center gap-2">
-                            <span className="text-slate-400 font-mono">{pct.toFixed(1)}%</span>
-                            <span className="font-bold text-slate-200 font-mono">
+                            <span className="text-slate-500 dark:text-slate-400 font-mono">{pct.toFixed(1)}%</span>
+                            <span className="font-bold text-slate-800 dark:text-slate-200 font-mono">
                               {formatMasked(amount, 'IDR', isPrivacyMode)}
                             </span>
                           </div>
                         </div>
-                        <div className="w-full h-2 rounded-full bg-slate-950 overflow-hidden">
+                        <div className="w-full h-2 rounded-full bg-slate-100 dark:bg-slate-950 overflow-hidden">
                           <div
                             className="h-full rounded-full transition-all"
                             style={{ width: `${pct}%`, backgroundColor: color }}
@@ -341,14 +341,14 @@ export const StatsView: React.FC = () => {
         </div>
 
         {/* Funding Source Breakdown */}
-        <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
+        <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
           <div>
-            <h3 className="font-bold text-white text-base">Funding Source Distribution</h3>
-            <p className="text-xs text-slate-400">Which bank or cash is used most for expenses</p>
+            <h3 className="font-bold text-slate-900 dark:text-white text-base">Funding Source Distribution</h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400">Which bank or cash is used most for expenses</p>
           </div>
 
           {Object.keys(expenseByAccount).length === 0 ? (
-            <p className="text-xs text-slate-500 py-6 text-center">No expenses recorded this month.</p>
+            <p className="text-xs text-slate-400 dark:text-slate-500 py-6 text-center">No expenses recorded this month.</p>
           ) : (
             <div className="space-y-3">
               {Object.entries(expenseByAccount)
@@ -359,17 +359,17 @@ export const StatsView: React.FC = () => {
                   return (
                     <div key={accId} className="space-y-1">
                       <div className="flex items-center justify-between text-xs">
-                        <span className="font-medium text-white">
-                          {item.name} <span className="text-[10px] text-slate-500 uppercase">({item.type})</span>
+                        <span className="font-medium text-slate-900 dark:text-white">
+                          {item.name} <span className="text-[10px] text-slate-400 dark:text-slate-500 uppercase">({item.type})</span>
                         </span>
                         <div className="flex items-center gap-2">
-                          <span className="text-slate-400 font-mono">{pct.toFixed(1)}%</span>
-                          <span className="font-bold text-slate-200 font-mono">
+                          <span className="text-slate-500 dark:text-slate-400 font-mono">{pct.toFixed(1)}%</span>
+                          <span className="font-bold text-slate-800 dark:text-slate-200 font-mono">
                             {formatMasked(item.amount, 'IDR', isPrivacyMode)}
                           </span>
                         </div>
                       </div>
-                      <div className="w-full h-2 rounded-full bg-slate-950 overflow-hidden">
+                      <div className="w-full h-2 rounded-full bg-slate-100 dark:bg-slate-950 overflow-hidden">
                         <div
                           className="h-full rounded-full bg-indigo-500 transition-all"
                           style={{ width: `${pct}%` }}
@@ -386,35 +386,35 @@ export const StatsView: React.FC = () => {
       {/* SYSTEM & EXCHANGE RATE SETTINGS */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* USD / IDR Exchange Rate Setting */}
-        <div className="p-5 sm:p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
+        <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
           <div className="flex items-start justify-between gap-2">
             <div className="space-y-1">
-              <div className="flex items-center gap-2 text-white font-bold text-sm">
-                <SlidersHorizontal className="w-4 h-4 text-emerald-400" />
+              <div className="flex items-center gap-2 text-slate-900 dark:text-white font-bold text-sm">
+                <SlidersHorizontal className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 <span>USD / IDR Exchange Rate Setting</span>
               </div>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500 dark:text-slate-400">
                 Used to calculate net worth and convert US ETF and USD holdings into IDR equivalents.
               </p>
             </div>
 
             {/* Live Source Badge */}
-            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-[11px] font-semibold shrink-0">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 dark:text-emerald-300 text-[11px] font-semibold shrink-0">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-pulse" />
               <span>{rateSource || 'Google Finance'}</span>
             </div>
           </div>
 
           {/* Rate Highlight Card */}
-          <div className="p-4 rounded-xl bg-slate-950/70 border border-slate-800/80 space-y-3">
+          <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800/80 space-y-3">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
-                <span className="text-[11px] font-medium text-slate-400 uppercase tracking-wider">Current Market Rate</span>
+                <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Current Market Rate</span>
                 <div className="flex items-baseline gap-2 mt-0.5">
-                  <span className="text-xl sm:text-2xl font-black font-mono text-white">
+                  <span className="text-xl sm:text-2xl font-black font-mono text-slate-900 dark:text-white">
                     Rp {Math.round(usdIdrRate).toLocaleString('id-ID')}
                   </span>
-                  <span className="text-xs font-semibold text-slate-400">/ 1 USD</span>
+                  <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">/ 1 USD</span>
                 </div>
               </div>
 
@@ -423,7 +423,7 @@ export const StatsView: React.FC = () => {
                 type="button"
                 onClick={handleFetchNow}
                 disabled={isRateFetching}
-                className="self-start sm:self-center flex items-center gap-2 px-3 py-2 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 text-emerald-300 font-bold text-xs transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
+                className="self-start sm:self-center flex items-center gap-2 px-3 py-2 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 text-emerald-700 dark:text-emerald-300 font-bold text-xs transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${isRateFetching ? 'animate-spin' : ''}`} />
                 <span>{isRateFetching ? 'Fetching Google...' : 'Refresh from Google'}</span>
@@ -431,13 +431,13 @@ export const StatsView: React.FC = () => {
             </div>
 
             {/* Status & Timestamp */}
-            <div className="pt-2 border-t border-slate-900 flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-400">
+            <div className="pt-2 border-t border-slate-200 dark:border-slate-900 flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-500 dark:text-slate-400">
               <div className="flex items-center gap-1.5">
-                <Clock className="w-3.5 h-3.5 text-slate-500" />
-                <span>Last updated: <strong className="text-slate-300">{formatLastUpdated(rateLastUpdated)}</strong></span>
+                <Clock className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
+                <span>Last updated: <strong className="text-slate-700 dark:text-slate-300">{formatLastUpdated(rateLastUpdated)}</strong></span>
               </div>
               {fetchToast && (
-                <span className="text-emerald-400 font-medium animate-in fade-in">
+                <span className="text-emerald-600 dark:text-emerald-400 font-medium animate-in fade-in">
                   ✓ {fetchToast}
                 </span>
               )}
@@ -445,13 +445,13 @@ export const StatsView: React.FC = () => {
           </div>
 
           {/* Auto-Update Every 12 Hours Toggle */}
-          <div className="p-3.5 rounded-xl bg-slate-950/40 border border-slate-800/60 flex items-center justify-between gap-3">
+          <div className="p-3.5 rounded-xl bg-slate-50/70 dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800/60 flex items-center justify-between gap-3">
             <div className="space-y-0.5">
-              <div className="flex items-center gap-1.5 text-xs font-bold text-white">
-                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+              <div className="flex items-center gap-1.5 text-xs font-bold text-slate-900 dark:text-white">
+                <Sparkles className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400" />
                 <span>Auto-update every 12 hours</span>
               </div>
-              <p className="text-[11px] text-slate-400">
+              <p className="text-[11px] text-slate-500 dark:text-slate-400">
                 Pulls live rates from Google in the background every 12 hours and keeps portfolio values synchronized.
               </p>
             </div>
@@ -462,7 +462,7 @@ export const StatsView: React.FC = () => {
               role="switch"
               aria-checked={isRateAutoUpdate}
               className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                isRateAutoUpdate ? 'bg-emerald-500' : 'bg-slate-800'
+                isRateAutoUpdate ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-800'
               }`}
             >
               <span
@@ -474,27 +474,27 @@ export const StatsView: React.FC = () => {
           </div>
 
           {/* Manual Rate Override Form */}
-          <div className="pt-1 border-t border-slate-800/60">
-            <div className="flex items-center justify-between text-xs text-slate-400 mb-2">
+          <div className="pt-1 border-t border-slate-200 dark:border-slate-800/60">
+            <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-2">
               <span>Manual Custom Rate:</span>
-              <span className="text-[11px] text-slate-500">Overrides live rate until next auto-sync</span>
+              <span className="text-[11px] text-slate-400 dark:text-slate-500">Overrides live rate until next auto-sync</span>
             </div>
             <form onSubmit={handleUpdateRate} className="flex items-center gap-2">
               <div className="relative flex-1">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-400">1 USD = Rp</span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-500 dark:text-slate-400">1 USD = Rp</span>
                 <input
                   type="number"
                   value={rateInput}
                   onChange={(e) => setRateInput(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-24 pr-3 py-2 text-sm text-white font-mono focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl pl-24 pr-3 py-2 text-sm text-slate-900 dark:text-white font-mono focus:outline-none focus:border-emerald-500"
                   required
                 />
               </div>
               <button
                 type="submit"
-                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 cursor-pointer shadow-md transition-all shrink-0"
+                className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-white border border-slate-200 dark:border-slate-700 text-xs font-bold rounded-xl flex items-center gap-1.5 cursor-pointer shadow-sm transition-all shrink-0"
               >
-                {rateSaved ? <Check className="w-3.5 h-3.5 text-emerald-400 stroke-[2.5]" /> : null}
+                {rateSaved ? <Check className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400 stroke-[2.5]" /> : null}
                 <span>{rateSaved ? 'Saved!' : 'Set Custom'}</span>
               </button>
             </form>
@@ -502,12 +502,12 @@ export const StatsView: React.FC = () => {
         </div>
 
         {/* Privacy & Safe Mode Toggle Card */}
-        <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-3">
-          <div className="flex items-center gap-2 text-white font-bold text-sm">
-            <Shield className="w-4 h-4 text-amber-400" />
+        <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+          <div className="flex items-center gap-2 text-slate-900 dark:text-white font-bold text-sm">
+            <Shield className="w-4 h-4 text-amber-500 dark:text-amber-400" />
             <span>Public Privacy Shield</span>
           </div>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-500 dark:text-slate-400">
             Instantly hide net worth and nominal balances on screen when entering expenses in public cafes, trains, or offices.
           </p>
 
@@ -516,8 +516,8 @@ export const StatsView: React.FC = () => {
               onClick={togglePrivacyMode}
               className={`w-full py-2.5 px-4 rounded-xl border text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
                 isPrivacyMode
-                  ? 'bg-amber-500/15 border-amber-500/40 text-amber-300'
-                  : 'bg-slate-950 border-slate-800 text-slate-300 hover:text-white'
+                  ? 'bg-amber-500/15 border-amber-500/40 text-amber-700 dark:text-amber-300'
+                  : 'bg-slate-100 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               <span>{isPrivacyMode ? 'Privacy Shield Is ACTIVE (Nominals Masked)' : 'Enable Privacy Shield (Mask Balances)'}</span>

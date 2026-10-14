@@ -261,28 +261,28 @@ export const AdminView: React.FC = () => {
   if (!isAdmin) {
     return (
       <div className="max-w-2xl mx-auto py-12 px-4 sm:px-6">
-        <div className="bg-slate-900 border border-rose-500/30 rounded-3xl p-8 text-center shadow-2xl relative overflow-hidden">
-          <div className="w-16 h-16 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-rose-400 flex items-center justify-center mx-auto mb-4">
+        <div className="bg-white dark:bg-slate-900 border border-rose-200 dark:border-rose-500/30 rounded-3xl p-8 text-center shadow-lg dark:shadow-2xl relative overflow-hidden">
+          <div className="w-16 h-16 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-rose-500 dark:text-rose-400 flex items-center justify-center mx-auto mb-4">
             <Lock className="w-8 h-8 stroke-[2.2]" />
           </div>
-          <h2 className="text-xl font-bold text-white mb-2">Restricted Administrator Area</h2>
-          <p className="text-slate-400 text-sm max-w-md mx-auto mb-6">
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Restricted Administrator Area</h2>
+          <p className="text-slate-600 dark:text-slate-400 text-sm max-w-md mx-auto mb-6">
             Akses ke Admin Panel dibatasi khusus untuk Administrator terdaftar.
-            Hak akses admin diberikan kepada pengguna <span className="font-semibold text-emerald-400">davinwijaya16@gmail.com</span>.
+            Hak akses admin diberikan kepada pengguna <span className="font-semibold text-emerald-600 dark:text-emerald-400">davinwijaya16@gmail.com</span>.
           </p>
-          <div className="p-3.5 bg-slate-950/80 border border-slate-800 rounded-xl mb-6 text-xs text-left space-y-1">
+          <div className="p-3.5 bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800 rounded-xl mb-6 text-xs text-left space-y-1">
             <div className="flex items-center justify-between">
-              <span className="text-slate-400">Your Current Email:</span>
-              <span className="font-mono text-slate-200">{user?.email || 'Not signed in'}</span>
+              <span className="text-slate-500 dark:text-slate-400">Your Current Email:</span>
+              <span className="font-mono text-slate-800 dark:text-slate-200">{user?.email || 'Not signed in'}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-slate-400">Admin Whitelist:</span>
-              <span className="font-mono text-emerald-400">davinwijaya16@gmail.com</span>
+              <span className="text-slate-500 dark:text-slate-400">Admin Whitelist:</span>
+              <span className="font-mono text-emerald-600 dark:text-emerald-400 font-semibold">davinwijaya16@gmail.com</span>
             </div>
           </div>
           <button
             onClick={() => setActiveTab('dashboard')}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-medium text-xs transition-colors cursor-pointer"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white font-medium text-xs border border-slate-300 dark:border-transparent transition-colors cursor-pointer shadow-sm"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Kembali ke Dashboard Utama</span>
@@ -316,7 +316,7 @@ export const AdminView: React.FC = () => {
       )}
 
       {/* ADMIN HEADER BANNER */}
-      <div className="p-5 sm:p-6 rounded-3xl bg-gradient-to-r from-slate-900 via-slate-900 to-[#0e1726] border border-slate-800/90 shadow-xl relative overflow-hidden">
+      <div className="p-5 sm:p-6 rounded-3xl bg-white dark:bg-gradient-to-r dark:from-slate-900 dark:via-slate-900 dark:to-[#0e1726] border border-slate-200 dark:border-slate-800/90 shadow-md dark:shadow-xl relative overflow-hidden">
         <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
 
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
@@ -325,16 +325,16 @@ export const AdminView: React.FC = () => {
               <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-slate-950 font-bold shadow-md shadow-emerald-500/20">
                 <ShieldCheck className="w-4.5 h-4.5 stroke-[2.5]" />
               </div>
-              <h1 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
+              <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">
                 Admin Management Console
               </h1>
-              <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300">
+              <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-700 dark:text-emerald-300">
                 Super Admin Access
               </span>
             </div>
-            <p className="text-xs text-slate-400 max-w-xl">
+            <p className="text-xs text-slate-600 dark:text-slate-400 max-w-xl">
               Panel kontrol website WealthTrack untuk mengelola akun pengguna, hak akses admin (khusus{' '}
-              <span className="text-emerald-400 font-semibold">davinwijaya16@gmail.com</span>),
+              <span className="text-emerald-600 dark:text-emerald-400 font-semibold">davinwijaya16@gmail.com</span>),
               pengumuman sistem, dan log audit transaksi.
             </p>
           </div>
@@ -343,19 +343,19 @@ export const AdminView: React.FC = () => {
             <button
               onClick={() => loadAdminData(true)}
               disabled={refreshing}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700/60 transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-semibold border border-slate-300 dark:border-slate-700/60 shadow-sm transition-colors cursor-pointer"
               title="Refresh admin statistics"
             >
-              <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin text-emerald-400' : ''}`} />
+              <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin text-emerald-500' : ''}`} />
               <span>{refreshing ? 'Syncing...' : 'Sync Data'}</span>
             </button>
 
             <button
               onClick={handleExportDB}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700/60 transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-semibold border border-slate-300 dark:border-slate-700/60 shadow-sm transition-colors cursor-pointer"
               title="Download backup JSON"
             >
-              <Download className="w-3.5 h-3.5 text-blue-400" />
+              <Download className="w-3.5 h-3.5 text-blue-500 dark:text-blue-400" />
               <span>Backup DB</span>
             </button>
 
@@ -370,13 +370,13 @@ export const AdminView: React.FC = () => {
         </div>
 
         {/* SUB-TABS NAVIGATION */}
-        <div className="mt-6 pt-4 border-t border-slate-800/80 flex items-center gap-2 overflow-x-auto no-scrollbar">
+        <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-800/80 flex items-center gap-2 overflow-x-auto no-scrollbar">
           <button
             onClick={() => setSubTab('overview')}
             className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
               subTab === 'overview'
-                ? 'bg-emerald-500/20 border border-emerald-500/40 text-emerald-300'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+                ? 'bg-emerald-500/15 border border-emerald-500/40 text-emerald-800 dark:text-emerald-300 shadow-sm'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/60'
             }`}
           >
             <Server className="w-3.5 h-3.5" />
@@ -387,13 +387,13 @@ export const AdminView: React.FC = () => {
             onClick={() => setSubTab('users')}
             className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
               subTab === 'users'
-                ? 'bg-emerald-500/20 border border-emerald-500/40 text-emerald-300'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+                ? 'bg-emerald-500/15 border border-emerald-500/40 text-emerald-800 dark:text-emerald-300 shadow-sm'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/60'
             }`}
           >
             <Users className="w-3.5 h-3.5" />
             <span>Users & Access</span>
-            <span className="px-1.5 py-0.2 rounded-md bg-slate-800 text-[10px] text-slate-300 font-mono">
+            <span className="px-1.5 py-0.2 rounded-md bg-slate-200 dark:bg-slate-800 text-[10px] text-slate-700 dark:text-slate-300 font-mono">
               {usersList.length}
             </span>
           </button>
@@ -402,13 +402,13 @@ export const AdminView: React.FC = () => {
             onClick={() => setSubTab('transactions')}
             className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
               subTab === 'transactions'
-                ? 'bg-emerald-500/20 border border-emerald-500/40 text-emerald-300'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+                ? 'bg-emerald-500/15 border border-emerald-500/40 text-emerald-800 dark:text-emerald-300 shadow-sm'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/60'
             }`}
           >
             <Receipt className="w-3.5 h-3.5" />
             <span>Audit & Transactions</span>
-            <span className="px-1.5 py-0.2 rounded-md bg-slate-800 text-[10px] text-slate-300 font-mono">
+            <span className="px-1.5 py-0.2 rounded-md bg-slate-200 dark:bg-slate-800 text-[10px] text-slate-700 dark:text-slate-300 font-mono">
               {transactionsList.length}
             </span>
           </button>
@@ -417,14 +417,14 @@ export const AdminView: React.FC = () => {
             onClick={() => setSubTab('settings')}
             className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
               subTab === 'settings'
-                ? 'bg-emerald-500/20 border border-emerald-500/40 text-emerald-300'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+                ? 'bg-emerald-500/15 border border-emerald-500/40 text-emerald-800 dark:text-emerald-300 shadow-sm'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/60'
             }`}
           >
             <Sliders className="w-3.5 h-3.5" />
             <span>Site Settings & Broadcast</span>
             {announcementEnabled && (
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
             )}
           </button>
         </div>
@@ -436,18 +436,18 @@ export const AdminView: React.FC = () => {
           {/* Top 4 Key Metrics */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Card 1: Total Registered Users */}
-            <div className="p-4 sm:p-5 rounded-2xl bg-slate-900 border border-slate-800/80 shadow-md">
+            <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 shadow-sm dark:shadow-md">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-medium text-slate-400">Total Users</span>
-                <div className="w-8 h-8 rounded-xl bg-blue-500/15 text-blue-400 flex items-center justify-center">
+                <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Total Users</span>
+                <div className="w-8 h-8 rounded-xl bg-blue-500/15 text-blue-500 dark:text-blue-400 flex items-center justify-center">
                   <Users className="w-4 h-4" />
                 </div>
               </div>
-              <div className="text-2xl font-black text-white tracking-tight">
+              <div className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
                 {overview?.totalUsers ?? usersList.length}
               </div>
-              <p className="text-[11px] text-slate-400 mt-1 flex items-center gap-1.5">
-                <span className="text-emerald-400 font-semibold">
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-1.5">
+                <span className="text-emerald-600 dark:text-emerald-400 font-semibold">
                   {overview?.adminCount || systemSettings?.adminEmails.length || 1} Admins
                 </span>
                 <span>• Active members</span>
@@ -455,49 +455,49 @@ export const AdminView: React.FC = () => {
             </div>
 
             {/* Card 2: Total Accounts Managed */}
-            <div className="p-4 sm:p-5 rounded-2xl bg-slate-900 border border-slate-800/80 shadow-md">
+            <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 shadow-sm dark:shadow-md">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-medium text-slate-400">Banks & Cash Accounts</span>
-                <div className="w-8 h-8 rounded-xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center">
+                <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Banks & Cash Accounts</span>
+                <div className="w-8 h-8 rounded-xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
                   <WalletCards className="w-4 h-4" />
                 </div>
               </div>
-              <div className="text-2xl font-black text-white tracking-tight">
+              <div className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
                 {overview?.totalAccounts ?? 0}
               </div>
-              <p className="text-[11px] text-slate-400 mt-1">
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
                 Liquid banking & cash accounts across all users
               </p>
             </div>
 
             {/* Card 3: Total Transactions Recorded */}
-            <div className="p-4 sm:p-5 rounded-2xl bg-slate-900 border border-slate-800/80 shadow-md">
+            <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 shadow-sm dark:shadow-md">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-medium text-slate-400">Total Transactions</span>
-                <div className="w-8 h-8 rounded-xl bg-purple-500/15 text-purple-400 flex items-center justify-center">
+                <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Total Transactions</span>
+                <div className="w-8 h-8 rounded-xl bg-purple-500/15 text-purple-600 dark:text-purple-400 flex items-center justify-center">
                   <Receipt className="w-4 h-4" />
                 </div>
               </div>
-              <div className="text-2xl font-black text-white tracking-tight">
+              <div className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
                 {overview?.totalTransactions ?? transactionsList.length}
               </div>
-              <p className="text-[11px] text-slate-400 mt-1 truncate">
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 truncate">
                 Volume: {formatIdr(overview?.totalVolumeIdr || 0)}
               </p>
             </div>
 
             {/* Card 4: Total Wealth Tracked */}
-            <div className="p-4 sm:p-5 rounded-2xl bg-slate-900 border border-slate-800/80 shadow-md">
+            <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 shadow-sm dark:shadow-md">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-medium text-slate-400">Tracked Wealth (IDR)</span>
-                <div className="w-8 h-8 rounded-xl bg-amber-500/15 text-amber-400 flex items-center justify-center">
+                <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Tracked Wealth (IDR)</span>
+                <div className="w-8 h-8 rounded-xl bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center">
                   <Coins className="w-4 h-4" />
                 </div>
               </div>
-              <div className="text-xl sm:text-2xl font-black text-emerald-400 tracking-tight truncate">
+              <div className="text-xl sm:text-2xl font-black text-emerald-600 dark:text-emerald-400 tracking-tight truncate">
                 {formatIdr(overview?.totalTrackedAssetsIdr || 0)}
               </div>
-              <p className="text-[11px] text-slate-400 mt-1">
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
                 Combined cash + investment assets
               </p>
             </div>
@@ -505,119 +505,119 @@ export const AdminView: React.FC = () => {
 
           {/* Infrastructure Health & Diagnostics */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 p-5 rounded-2xl bg-slate-900 border border-slate-800/80 space-y-4">
+            <div className="lg:col-span-2 p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 shadow-sm space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Activity className="w-4 h-4 text-emerald-400" />
-                  <h3 className="font-bold text-white text-sm">System Health & Engine Status</h3>
+                  <Activity className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
+                  <h3 className="font-bold text-slate-900 dark:text-white text-sm">System Health & Engine Status</h3>
                 </div>
-                <span className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-bold border border-emerald-500/20">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 text-[10px] font-bold border border-emerald-500/20">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-pulse" />
                   All Systems Operational
                 </span>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                <div className="p-3.5 bg-slate-950/70 border border-slate-800/60 rounded-xl space-y-1">
-                  <div className="text-[11px] text-slate-400">Database Engine</div>
-                  <div className="text-xs font-semibold text-slate-200">
+                <div className="p-3.5 bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800/60 rounded-xl space-y-1">
+                  <div className="text-[11px] text-slate-500 dark:text-slate-400">Database Engine</div>
+                  <div className="text-xs font-semibold text-slate-800 dark:text-slate-200">
                     {overview?.dbType || 'Express JSON File DB (Persistent)'}
                   </div>
-                  <div className="text-[10px] text-emerald-400 font-mono flex items-center gap-1">
+                  <div className="text-[10px] text-emerald-600 dark:text-emerald-400 font-mono flex items-center gap-1">
                     <CheckCircle2 className="w-3 h-3" /> Auto-sync enabled
                   </div>
                 </div>
 
-                <div className="p-3.5 bg-slate-950/70 border border-slate-800/60 rounded-xl space-y-1">
-                  <div className="text-[11px] text-slate-400">USD/IDR Exchange Engine</div>
-                  <div className="text-xs font-semibold text-slate-200">
+                <div className="p-3.5 bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800/60 rounded-xl space-y-1">
+                  <div className="text-[11px] text-slate-500 dark:text-slate-400">USD/IDR Exchange Engine</div>
+                  <div className="text-xs font-semibold text-slate-800 dark:text-slate-200">
                     Live Rate: {formatIdr(usdIdrRate)}
                   </div>
-                  <div className="text-[10px] text-slate-400">
+                  <div className="text-[10px] text-slate-500 dark:text-slate-400">
                     Source: Google Finance & Live Market API
                   </div>
                 </div>
 
-                <div className="p-3.5 bg-slate-950/70 border border-slate-800/60 rounded-xl space-y-1">
-                  <div className="text-[11px] text-slate-400">Server Node Uptime</div>
-                  <div className="text-xs font-mono text-slate-200">
+                <div className="p-3.5 bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800/60 rounded-xl space-y-1">
+                  <div className="text-[11px] text-slate-500 dark:text-slate-400">Server Node Uptime</div>
+                  <div className="text-xs font-mono text-slate-800 dark:text-slate-200">
                     {Math.floor((overview?.uptimeSeconds || 3600) / 60)} minutes uptime
                   </div>
-                  <div className="text-[10px] text-slate-400">Vite dev server mounted on port 3000</div>
+                  <div className="text-[10px] text-slate-500 dark:text-slate-400">Vite dev server mounted on port 3000</div>
                 </div>
 
-                <div className="p-3.5 bg-slate-950/70 border border-slate-800/60 rounded-xl space-y-1">
-                  <div className="text-[11px] text-slate-400">Designated Master Super Admin</div>
-                  <div className="text-xs font-mono font-semibold text-emerald-400 truncate">
+                <div className="p-3.5 bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800/60 rounded-xl space-y-1">
+                  <div className="text-[11px] text-slate-500 dark:text-slate-400">Designated Master Super Admin</div>
+                  <div className="text-xs font-mono font-semibold text-emerald-600 dark:text-emerald-400 truncate">
                     davinwijaya16@gmail.com
                   </div>
-                  <div className="text-[10px] text-slate-400">Permanent super-admin rights granted</div>
+                  <div className="text-[10px] text-slate-500 dark:text-slate-400">Permanent super-admin rights granted</div>
                 </div>
               </div>
             </div>
 
             {/* Quick Actions Panel */}
-            <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800/80 space-y-4">
-              <h3 className="font-bold text-white text-sm flex items-center gap-2">
-                <Sliders className="w-4 h-4 text-blue-400" />
+            <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 shadow-sm space-y-4">
+              <h3 className="font-bold text-slate-900 dark:text-white text-sm flex items-center gap-2">
+                <Sliders className="w-4 h-4 text-blue-500 dark:text-blue-400" />
                 Quick Admin Actions
               </h3>
 
               <div className="space-y-2">
                 <button
                   onClick={() => setSubTab('users')}
-                  className="w-full flex items-center justify-between p-3 rounded-xl bg-slate-950/80 hover:bg-slate-800/80 border border-slate-800 text-left transition-colors cursor-pointer group"
+                  className="w-full flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 dark:bg-slate-950/80 dark:hover:bg-slate-800/80 border border-slate-200 dark:border-slate-800 text-left transition-colors cursor-pointer group shadow-sm"
                 >
                   <div className="flex items-center gap-2.5">
-                    <div className="w-7 h-7 rounded-lg bg-blue-500/15 text-blue-400 flex items-center justify-center">
+                    <div className="w-7 h-7 rounded-lg bg-blue-500/15 text-blue-500 dark:text-blue-400 flex items-center justify-center">
                       <Users className="w-3.5 h-3.5" />
                     </div>
                     <div>
-                      <div className="text-xs font-semibold text-white group-hover:text-blue-400 transition-colors">
+                      <div className="text-xs font-semibold text-slate-800 group-hover:text-blue-600 dark:text-white dark:group-hover:text-blue-400 transition-colors">
                         Manage User Accounts
                       </div>
-                      <div className="text-[10px] text-slate-400">Add or promote admin emails</div>
+                      <div className="text-[10px] text-slate-500 dark:text-slate-400">Add or promote admin emails</div>
                     </div>
                   </div>
-                  <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-slate-300" />
+                  <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-700 dark:text-slate-500 dark:group-hover:text-slate-300" />
                 </button>
 
                 <button
                   onClick={() => setSubTab('settings')}
-                  className="w-full flex items-center justify-between p-3 rounded-xl bg-slate-950/80 hover:bg-slate-800/80 border border-slate-800 text-left transition-colors cursor-pointer group"
+                  className="w-full flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 dark:bg-slate-950/80 dark:hover:bg-slate-800/80 border border-slate-200 dark:border-slate-800 text-left transition-colors cursor-pointer group shadow-sm"
                 >
                   <div className="flex items-center gap-2.5">
-                    <div className="w-7 h-7 rounded-lg bg-amber-500/15 text-amber-400 flex items-center justify-center">
+                    <div className="w-7 h-7 rounded-lg bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center">
                       <Megaphone className="w-3.5 h-3.5" />
                     </div>
                     <div>
-                      <div className="text-xs font-semibold text-white group-hover:text-amber-400 transition-colors">
+                      <div className="text-xs font-semibold text-slate-800 group-hover:text-amber-600 dark:text-white dark:group-hover:text-amber-400 transition-colors">
                         Broadcast Announcement
                       </div>
-                      <div className="text-[10px] text-slate-400">
+                      <div className="text-[10px] text-slate-500 dark:text-slate-400">
                         {announcementEnabled ? 'Active on all screens' : 'Banner disabled'}
                       </div>
                     </div>
                   </div>
-                  <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-slate-300" />
+                  <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-700 dark:text-slate-500 dark:group-hover:text-slate-300" />
                 </button>
 
                 <button
                   onClick={handleExportDB}
-                  className="w-full flex items-center justify-between p-3 rounded-xl bg-slate-950/80 hover:bg-slate-800/80 border border-slate-800 text-left transition-colors cursor-pointer group"
+                  className="w-full flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 dark:bg-slate-950/80 dark:hover:bg-slate-800/80 border border-slate-200 dark:border-slate-800 text-left transition-colors cursor-pointer group shadow-sm"
                 >
                   <div className="flex items-center gap-2.5">
-                    <div className="w-7 h-7 rounded-lg bg-emerald-500/15 text-emerald-400 flex items-center justify-center">
+                    <div className="w-7 h-7 rounded-lg bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
                       <Download className="w-3.5 h-3.5" />
                     </div>
                     <div>
-                      <div className="text-xs font-semibold text-white group-hover:text-emerald-400 transition-colors">
+                      <div className="text-xs font-semibold text-slate-800 group-hover:text-emerald-600 dark:text-white dark:group-hover:text-emerald-400 transition-colors">
                         Full DB Snapshot (JSON)
                       </div>
-                      <div className="text-[10px] text-slate-400">Instant offline safety backup</div>
+                      <div className="text-[10px] text-slate-500 dark:text-slate-400">Instant offline safety backup</div>
                     </div>
                   </div>
-                  <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-slate-300" />
+                  <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-700 dark:text-slate-500 dark:group-hover:text-slate-300" />
                 </button>
               </div>
             </div>
@@ -629,14 +629,14 @@ export const AdminView: React.FC = () => {
       {subTab === 'users' && (
         <div className="space-y-6">
           {/* Add Admin Email Card */}
-          <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800/80 space-y-3">
+          <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 shadow-sm space-y-3">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="font-bold text-white text-sm flex items-center gap-2">
-                  <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                <h3 className="font-bold text-slate-900 dark:text-white text-sm flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
                   Beri Akses Admin ke Pengguna Baru
                 </h3>
-                <p className="text-xs text-slate-400 mt-0.5">
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                   Masukkan email untuk memberikan privilege Admin secara instan.
                 </p>
               </div>
@@ -649,12 +649,12 @@ export const AdminView: React.FC = () => {
                   placeholder="Contoh: davinwijaya16@gmail.com"
                   value={newAdminEmailInput}
                   onChange={(e) => setNewAdminEmailInput(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 font-mono"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-emerald-500 font-mono"
                 />
               </div>
               <button
                 type="submit"
-                className="px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer shrink-0"
+                className="px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer shrink-0 shadow-sm"
               >
                 <Plus className="w-4 h-4" />
                 <span>Beri Akses Admin</span>
@@ -663,7 +663,7 @@ export const AdminView: React.FC = () => {
 
             {/* Current Admin Emails List */}
             <div className="pt-2">
-              <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+              <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                 Daftar Administrator Aktif ({systemSettings?.adminEmails.length || 2}):
               </span>
               <div className="flex flex-wrap gap-2 mt-2">
@@ -674,20 +674,20 @@ export const AdminView: React.FC = () => {
                       key={email}
                       className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-xs font-mono border ${
                         isMaster
-                          ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-300 font-bold'
-                          : 'bg-slate-800/80 border-slate-700 text-slate-200'
+                          ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-700 dark:text-emerald-300 font-bold'
+                          : 'bg-slate-100 dark:bg-slate-800/80 border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200'
                       }`}
                     >
                       <span>{email}</span>
                       {isMaster ? (
-                        <span className="text-[10px] px-1 bg-emerald-500/30 text-emerald-200 rounded">
+                        <span className="text-[10px] px-1 bg-emerald-500/30 text-emerald-800 dark:text-emerald-200 rounded">
                           Master
                         </span>
                       ) : (
                         <button
                           type="button"
                           onClick={() => handleRemoveAdminEmail(email)}
-                          className="hover:text-rose-400 p-0.5 text-slate-400 transition-colors cursor-pointer"
+                          className="hover:text-rose-500 p-0.5 text-slate-400 transition-colors cursor-pointer"
                           title="Hapus privilege admin"
                         >
                           <X className="w-3 h-3" />
@@ -701,11 +701,11 @@ export const AdminView: React.FC = () => {
           </div>
 
           {/* User List Header & Search */}
-          <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800/80 space-y-4">
+          <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 shadow-sm space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
-                <h3 className="font-bold text-white text-sm">Semua Pengguna Terdaftar ({usersList.length})</h3>
-                <p className="text-xs text-slate-400">
+                <h3 className="font-bold text-slate-900 dark:text-white text-sm">Semua Pengguna Terdaftar ({usersList.length})</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
                   Lihat daftar pengguna, total akun, transaksi, dan kelola role mereka.
                 </p>
               </div>
@@ -717,7 +717,7 @@ export const AdminView: React.FC = () => {
                   placeholder="Cari user (nama / email)..."
                   value={userSearch}
                   onChange={(e) => setUserSearch(e.target.value)}
-                  className="w-full pl-9 pr-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+                  className="w-full pl-9 pr-3 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-emerald-500"
                 />
               </div>
             </div>
@@ -726,7 +726,7 @@ export const AdminView: React.FC = () => {
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead>
-                  <tr className="border-b border-slate-800 text-slate-400 text-[11px] font-semibold">
+                  <tr className="border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 text-[11px] font-semibold">
                     <th className="pb-3 pl-2">User / Name</th>
                     <th className="pb-3">Email Address</th>
                     <th className="pb-3">Role</th>
@@ -736,7 +736,7 @@ export const AdminView: React.FC = () => {
                     <th className="pb-3 pr-2 text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/50">
+                <tbody className="divide-y divide-slate-200 dark:divide-slate-800/50">
                   {filteredUsers.length === 0 ? (
                     <tr>
                       <td colSpan={7} className="py-8 text-center text-slate-500 text-xs">
@@ -747,42 +747,42 @@ export const AdminView: React.FC = () => {
                     filteredUsers.map((u) => {
                       const isTargetMaster = u.email.toLowerCase() === 'davinwijaya16@gmail.com';
                       return (
-                        <tr key={u.id} className="hover:bg-slate-800/40 transition-colors">
+                        <tr key={u.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
                           <td className="py-3 pl-2">
                             <div className="flex items-center gap-2">
-                              <div className="w-7 h-7 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-[11px] text-white shrink-0">
+                              <div className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center font-bold text-[11px] text-slate-800 dark:text-white shrink-0">
                                 {u.name ? u.name.slice(0, 2).toUpperCase() : 'U'}
                               </div>
-                              <div className="font-semibold text-white truncate max-w-[140px]">
+                              <div className="font-semibold text-slate-900 dark:text-white truncate max-w-[140px]">
                                 {u.name || 'Member'}
                               </div>
                             </div>
                           </td>
 
-                          <td className="py-3 font-mono text-slate-300">{u.email}</td>
+                          <td className="py-3 font-mono text-slate-700 dark:text-slate-300">{u.email}</td>
 
                           <td className="py-3">
                             {u.role === 'admin' ? (
-                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 font-bold text-[10px]">
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-700 dark:text-emerald-400 font-bold text-[10px]">
                                 <Shield className="w-3 h-3" />
                                 {isTargetMaster ? 'SUPER ADMIN' : 'ADMIN'}
                               </span>
                             ) : (
-                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 text-[10px] font-medium">
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-[10px] font-medium border border-slate-200 dark:border-transparent">
                                 Member
                               </span>
                             )}
                           </td>
 
-                          <td className="py-3 font-mono text-slate-300">
+                          <td className="py-3 font-mono text-slate-700 dark:text-slate-300">
                             {u.accountsCount ?? 0} acc
                           </td>
 
-                          <td className="py-3 font-mono text-slate-300">
+                          <td className="py-3 font-mono text-slate-700 dark:text-slate-300">
                             {u.transactionsCount ?? 0} txs
                           </td>
 
-                          <td className="py-3 font-mono text-emerald-400 font-semibold">
+                          <td className="py-3 font-mono text-emerald-600 dark:text-emerald-400 font-semibold">
                             {formatIdr(u.totalNetWorthIdr || 0)}
                           </td>
 
@@ -794,8 +794,8 @@ export const AdminView: React.FC = () => {
                                 disabled={isTargetMaster}
                                 className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-colors cursor-pointer ${
                                   u.role === 'admin'
-                                    ? 'bg-amber-500/10 text-amber-300 hover:bg-amber-500/20 border border-amber-500/30 disabled:opacity-50'
-                                    : 'bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20 border border-emerald-500/30'
+                                    ? 'bg-amber-500/15 text-amber-700 dark:text-amber-300 hover:bg-amber-500/25 border border-amber-500/30 disabled:opacity-50'
+                                    : 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-500/25 border border-emerald-500/30'
                                 }`}
                                 title={
                                   isTargetMaster
@@ -812,7 +812,7 @@ export const AdminView: React.FC = () => {
                               <button
                                 onClick={() => setUserToDelete(u)}
                                 disabled={isTargetMaster || u.id === user?.id}
-                                className="p-1 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                                className="p-1 text-slate-400 hover:text-rose-500 hover:bg-rose-500/10 rounded-lg transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
                                 title={
                                   isTargetMaster
                                     ? 'Master admin cannot be deleted'
@@ -838,14 +838,14 @@ export const AdminView: React.FC = () => {
 
       {/* ---------------- 3. SUB-TAB: GLOBAL AUDIT & TRANSACTIONS ---------------- */}
       {subTab === 'transactions' && (
-        <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800/80 space-y-4">
+        <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 shadow-sm space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <h3 className="font-bold text-white text-sm flex items-center gap-2">
-                <Receipt className="w-4 h-4 text-purple-400" />
+              <h3 className="font-bold text-slate-900 dark:text-white text-sm flex items-center gap-2">
+                <Receipt className="w-4 h-4 text-purple-500 dark:text-purple-400" />
                 Global Transaction Audit Log ({transactionsList.length})
               </h3>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500 dark:text-slate-400">
                 Log real-time semua pengeluaran, pemasukan, dan transfer dari semua user di website.
               </p>
             </div>
@@ -854,7 +854,7 @@ export const AdminView: React.FC = () => {
               <select
                 value={txTypeFilter}
                 onChange={(e) => setTxTypeFilter(e.target.value)}
-                className="px-2.5 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none"
+                className="px-2.5 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none"
               >
                 <option value="all">Semua Tipe</option>
                 <option value="expense">Expense</option>
@@ -870,7 +870,7 @@ export const AdminView: React.FC = () => {
                   placeholder="Cari transaksi / user..."
                   value={txSearch}
                   onChange={(e) => setTxSearch(e.target.value)}
-                  className="w-full pl-8 pr-2.5 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none"
+                  className="w-full pl-8 pr-2.5 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none"
                 />
               </div>
             </div>
@@ -879,7 +879,7 @@ export const AdminView: React.FC = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead>
-                <tr className="border-b border-slate-800 text-slate-400 text-[11px] font-semibold">
+                <tr className="border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 text-[11px] font-semibold">
                   <th className="pb-3 pl-2">Date</th>
                   <th className="pb-3">User</th>
                   <th className="pb-3">Type</th>
@@ -889,7 +889,7 @@ export const AdminView: React.FC = () => {
                   <th className="pb-3 pr-2 text-right">Amount (IDR)</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/50">
+              <tbody className="divide-y divide-slate-200 dark:divide-slate-800/50">
                 {filteredTransactions.length === 0 ? (
                   <tr>
                     <td colSpan={7} className="py-8 text-center text-slate-500 text-xs">
@@ -898,38 +898,38 @@ export const AdminView: React.FC = () => {
                   </tr>
                 ) : (
                   filteredTransactions.map((tx) => (
-                    <tr key={tx.id} className="hover:bg-slate-800/40 transition-colors">
-                      <td className="py-2.5 pl-2 font-mono text-slate-400 text-[11px]">{tx.date}</td>
+                    <tr key={tx.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+                      <td className="py-2.5 pl-2 font-mono text-slate-500 dark:text-slate-400 text-[11px]">{tx.date}</td>
                       <td className="py-2.5">
-                        <div className="font-semibold text-white">{tx.userName}</div>
-                        <div className="text-[10px] text-slate-400 font-mono">{tx.userEmail}</div>
+                        <div className="font-semibold text-slate-900 dark:text-white">{tx.userName}</div>
+                        <div className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">{tx.userEmail}</div>
                       </td>
                       <td className="py-2.5">
                         <span
                           className={`px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider ${
                             tx.type === 'expense'
-                              ? 'bg-rose-500/15 text-rose-400'
+                              ? 'bg-rose-500/15 text-rose-600 dark:text-rose-400'
                               : tx.type === 'income'
-                              ? 'bg-emerald-500/15 text-emerald-400'
+                              ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400'
                               : tx.type === 'transfer'
-                              ? 'bg-blue-500/15 text-blue-400'
-                              : 'bg-indigo-500/15 text-indigo-400'
+                              ? 'bg-blue-500/15 text-blue-600 dark:text-blue-400'
+                              : 'bg-indigo-500/15 text-indigo-600 dark:text-indigo-400'
                           }`}
                         >
                           {tx.type}
                         </span>
                       </td>
-                      <td className="py-2.5 font-medium text-slate-200">{tx.category}</td>
-                      <td className="py-2.5 text-slate-400">{tx.accountName || 'Account'}</td>
-                      <td className="py-2.5 text-slate-400 max-w-xs truncate">{tx.notes || '—'}</td>
+                      <td className="py-2.5 font-medium text-slate-800 dark:text-slate-200">{tx.category}</td>
+                      <td className="py-2.5 text-slate-600 dark:text-slate-400">{tx.accountName || 'Account'}</td>
+                      <td className="py-2.5 text-slate-600 dark:text-slate-400 max-w-xs truncate">{tx.notes || '—'}</td>
                       <td className="py-2.5 pr-2 text-right font-mono font-bold">
                         <span
                           className={
                             tx.type === 'expense'
-                              ? 'text-rose-400'
+                              ? 'text-rose-600 dark:text-rose-400'
                               : tx.type === 'income'
-                              ? 'text-emerald-400'
-                              : 'text-slate-200'
+                              ? 'text-emerald-600 dark:text-emerald-400'
+                              : 'text-slate-800 dark:text-slate-200'
                           }
                         >
                           {tx.type === 'expense' ? '-' : '+'}
@@ -949,21 +949,21 @@ export const AdminView: React.FC = () => {
       {subTab === 'settings' && (
         <div className="space-y-6">
           {/* Global Announcement Banner Configuration */}
-          <div className="p-5 sm:p-6 rounded-2xl bg-slate-900 border border-slate-800/80 space-y-4">
+          <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 shadow-sm space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="font-bold text-white text-base flex items-center gap-2">
-                  <Megaphone className="w-4 h-4 text-emerald-400" />
+                <h3 className="font-bold text-slate-900 dark:text-white text-base flex items-center gap-2">
+                  <Megaphone className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
                   Website Announcement Banner (Site-wide)
                 </h3>
-                <p className="text-xs text-slate-400 mt-0.5">
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                   Tampilkan banner pengumuman di bagian paling atas website untuk seluruh pengunjung/user.
                 </p>
               </div>
 
               {/* Enable / Disable Toggle Switch */}
               <label className="flex items-center gap-2 cursor-pointer select-none">
-                <span className="text-xs font-semibold text-slate-300">
+                <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                   {announcementEnabled ? 'Banner Active' : 'Banner Inactive'}
                 </span>
                 <input
@@ -974,7 +974,7 @@ export const AdminView: React.FC = () => {
                 />
                 <div
                   className={`w-11 h-6 rounded-full transition-colors p-1 ${
-                    announcementEnabled ? 'bg-emerald-500' : 'bg-slate-700'
+                    announcementEnabled ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-700'
                   }`}
                 >
                   <div
@@ -988,7 +988,7 @@ export const AdminView: React.FC = () => {
 
             {/* Input Message */}
             <div className="space-y-2 pt-2">
-              <label className="block text-xs font-semibold text-slate-300">
+              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
                 Pesan Pengumuman:
               </label>
               <textarea
@@ -996,21 +996,21 @@ export const AdminView: React.FC = () => {
                 value={announcementMsg}
                 onChange={(e) => setAnnouncementMsg(e.target.value)}
                 placeholder="Contoh: Pemeliharaan sistem terjadwal pada Minggu pukul 02:00 WIB. Semua data tetap aman!"
-                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-emerald-500"
               />
             </div>
 
             {/* Banner Type Selection */}
             <div className="space-y-2">
-              <label className="block text-xs font-semibold text-slate-300">
+              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
                 Tipe / Gaya Warna Banner:
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 {[
-                  { id: 'info', label: 'Info (Biru)', bg: 'bg-blue-500/15 border-blue-500/40 text-blue-300' },
-                  { id: 'warning', label: 'Warning (Kuning)', bg: 'bg-amber-500/15 border-amber-500/40 text-amber-300' },
-                  { id: 'success', label: 'Success (Hijau)', bg: 'bg-emerald-500/15 border-emerald-500/40 text-emerald-300' },
-                  { id: 'alert', label: 'Urgent Alert (Merah)', bg: 'bg-rose-500/15 border-rose-500/40 text-rose-300' },
+                  { id: 'info', label: 'Info (Biru)', bg: 'bg-blue-500/15 border-blue-500/40 text-blue-700 dark:text-blue-300' },
+                  { id: 'warning', label: 'Warning (Kuning)', bg: 'bg-amber-500/15 border-amber-500/40 text-amber-700 dark:text-amber-300' },
+                  { id: 'success', label: 'Success (Hijau)', bg: 'bg-emerald-500/15 border-emerald-500/40 text-emerald-700 dark:text-emerald-300' },
+                  { id: 'alert', label: 'Urgent Alert (Merah)', bg: 'bg-rose-500/15 border-rose-500/40 text-rose-700 dark:text-rose-300' },
                 ].map((item) => (
                   <button
                     key={item.id}
@@ -1019,7 +1019,7 @@ export const AdminView: React.FC = () => {
                     className={`py-2 px-3 rounded-xl border text-xs font-semibold transition-all cursor-pointer ${
                       announcementType === item.id
                         ? `${item.bg} ring-2 ring-emerald-500`
-                        : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-white'
+                        : 'bg-slate-50 dark:bg-slate-950 border-slate-300 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                     }`}
                   >
                     {item.label}
@@ -1031,18 +1031,18 @@ export const AdminView: React.FC = () => {
             {/* Live Preview */}
             {announcementEnabled && announcementMsg && (
               <div className="pt-2">
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                   Live Banner Preview:
                 </span>
                 <div
                   className={`mt-1.5 p-3 rounded-xl border text-xs font-medium flex items-center gap-2 ${
                     announcementType === 'warning'
-                      ? 'bg-amber-500/10 border-amber-500/30 text-amber-300'
+                      ? 'bg-amber-500/10 border-amber-500/30 text-amber-800 dark:text-amber-300'
                       : announcementType === 'alert'
-                      ? 'bg-rose-500/10 border-rose-500/30 text-rose-300'
+                      ? 'bg-rose-500/10 border-rose-500/30 text-rose-800 dark:text-rose-300'
                       : announcementType === 'success'
-                      ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
-                      : 'bg-blue-500/10 border-blue-500/30 text-blue-300'
+                      ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-800 dark:text-emerald-300'
+                      : 'bg-blue-500/10 border-blue-500/30 text-blue-800 dark:text-blue-300'
                   }`}
                 >
                   <Megaphone className="w-4 h-4 shrink-0" />
@@ -1061,17 +1061,17 @@ export const AdminView: React.FC = () => {
           </div>
 
           {/* System Control Policies */}
-          <div className="p-5 sm:p-6 rounded-2xl bg-slate-900 border border-slate-800/80 space-y-4">
-            <h3 className="font-bold text-white text-base flex items-center gap-2">
-              <Sliders className="w-4 h-4 text-blue-400" />
+          <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 shadow-sm space-y-4">
+            <h3 className="font-bold text-slate-900 dark:text-white text-base flex items-center gap-2">
+              <Sliders className="w-4 h-4 text-blue-500 dark:text-blue-400" />
               Kebijakan Akses & Maintenance Mode
             </h3>
 
             <div className="space-y-3">
-              <div className="flex items-center justify-between p-3.5 bg-slate-950 rounded-xl border border-slate-800/80">
+              <div className="flex items-center justify-between p-3.5 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800/80">
                 <div>
-                  <div className="text-xs font-semibold text-white">Allow Public User Registrations</div>
-                  <div className="text-[11px] text-slate-400">
+                  <div className="text-xs font-semibold text-slate-900 dark:text-white">Allow Public User Registrations</div>
+                  <div className="text-[11px] text-slate-500 dark:text-slate-400">
                     Bila dimatikan, hanya akun yang sudah terdaftar yang dapat login.
                   </div>
                 </div>
@@ -1083,10 +1083,10 @@ export const AdminView: React.FC = () => {
                 />
               </div>
 
-              <div className="flex items-center justify-between p-3.5 bg-slate-950 rounded-xl border border-slate-800/80">
+              <div className="flex items-center justify-between p-3.5 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800/80">
                 <div>
-                  <div className="text-xs font-semibold text-white">Maintenance Mode Indicator</div>
-                  <div className="text-[11px] text-slate-400">
+                  <div className="text-xs font-semibold text-slate-900 dark:text-white">Maintenance Mode Indicator</div>
+                  <div className="text-[11px] text-slate-500 dark:text-slate-400">
                     Menampilkan indikator pemeliharaan sistem kepada user.
                   </div>
                 </div>
@@ -1101,7 +1101,7 @@ export const AdminView: React.FC = () => {
 
             <button
               onClick={handleSaveAnnouncement}
-              className="px-5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs transition-colors cursor-pointer"
+              className="px-5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white font-semibold text-xs border border-slate-300 dark:border-slate-700 shadow-sm transition-colors cursor-pointer"
             >
               Simpan Kebijakan Sistem
             </button>
@@ -1111,17 +1111,17 @@ export const AdminView: React.FC = () => {
 
       {/* Delete User Confirmation Modal */}
       {userToDelete && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in">
-          <div className="w-full max-w-md p-6 bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl space-y-4 animate-in zoom-in-95">
-            <div className="w-12 h-12 rounded-2xl bg-rose-500/15 text-rose-400 flex items-center justify-center mx-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 dark:bg-black/75 backdrop-blur-sm animate-in fade-in">
+          <div className="w-full max-w-md p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-2xl space-y-4 animate-in zoom-in-95">
+            <div className="w-12 h-12 rounded-2xl bg-rose-500/15 text-rose-500 dark:text-rose-400 flex items-center justify-center mx-auto">
               <Trash2 className="w-6 h-6" />
             </div>
 
             <div className="text-center space-y-1">
-              <h3 className="text-base font-bold text-white">Konfirmasi Hapus Pengguna</h3>
-              <p className="text-xs text-slate-400">
+              <h3 className="text-base font-bold text-slate-900 dark:text-white">Konfirmasi Hapus Pengguna</h3>
+              <p className="text-xs text-slate-600 dark:text-slate-400">
                 Apakah Anda yakin ingin menghapus user{' '}
-                <span className="font-semibold text-rose-400">{userToDelete.email}</span>?
+                <span className="font-semibold text-rose-600 dark:text-rose-400">{userToDelete.email}</span>?
               </p>
               <p className="text-[11px] text-slate-500 pt-1">
                 Semua akun bank, transaksi, dan aset investasi pengguna ini akan dihapus permanen. Tindakan ini tidak dapat dibatalkan.
@@ -1132,14 +1132,14 @@ export const AdminView: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setUserToDelete(null)}
-                className="flex-1 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs transition-colors cursor-pointer"
+                className="flex-1 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white font-semibold text-xs border border-slate-300 dark:border-slate-700 transition-colors cursor-pointer"
               >
                 Batal
               </button>
               <button
                 type="button"
                 onClick={handleDeleteUser}
-                className="flex-1 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs transition-colors cursor-pointer"
+                className="flex-1 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs transition-colors cursor-pointer shadow-md"
               >
                 Hapus Permanen
               </button>

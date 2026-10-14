@@ -88,42 +88,42 @@ export const AccountsView: React.FC = () => {
 
       {/* Overview Statistics by Account Group */}
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-3.5">
-        <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800">
-          <span className="text-xs text-slate-400 font-medium">Total Liquid Capital</span>
-          <p className="text-xl sm:text-2xl font-black text-white font-mono mt-1">
+        <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+          <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Total Liquid Capital</span>
+          <p className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white font-mono mt-1">
             {formatMasked(totalLiquid, 'IDR', isPrivacyMode)}
           </p>
           <span className="text-[11px] text-slate-500">Across all banks & cash</span>
         </div>
 
-        <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800">
-          <div className="flex items-center justify-between text-xs text-blue-400">
+        <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+          <div className="flex items-center justify-between text-xs text-blue-500 dark:text-blue-400">
             <span className="font-semibold">Banks</span>
             <Landmark className="w-4 h-4" />
           </div>
-          <p className="text-lg sm:text-xl font-bold text-blue-300 font-mono mt-1">
+          <p className="text-lg sm:text-xl font-bold text-blue-600 dark:text-blue-300 font-mono mt-1">
             {formatMasked(totalBankBalance, 'IDR', isPrivacyMode)}
           </p>
           <span className="text-[11px] text-slate-500">{bankAccounts.length} account(s)</span>
         </div>
 
-        <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800">
-          <div className="flex items-center justify-between text-xs text-emerald-400">
+        <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+          <div className="flex items-center justify-between text-xs text-emerald-600 dark:text-emerald-400">
             <span className="font-semibold">Physical Cash</span>
             <Coins className="w-4 h-4" />
           </div>
-          <p className="text-lg sm:text-xl font-bold text-emerald-300 font-mono mt-1">
+          <p className="text-lg sm:text-xl font-bold text-emerald-600 dark:text-emerald-300 font-mono mt-1">
             {formatMasked(totalCashBalance, 'IDR', isPrivacyMode)}
           </p>
           <span className="text-[11px] text-slate-500">{cashAccounts.length} wallet(s)</span>
         </div>
 
-        <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800">
-          <div className="flex items-center justify-between text-xs text-purple-400">
+        <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+          <div className="flex items-center justify-between text-xs text-purple-600 dark:text-purple-400">
             <span className="font-semibold">E-Wallets</span>
             <Wallet className="w-4 h-4" />
           </div>
-          <p className="text-lg sm:text-xl font-bold text-purple-300 font-mono mt-1">
+          <p className="text-lg sm:text-xl font-bold text-purple-600 dark:text-purple-300 font-mono mt-1">
             {formatMasked(totalEwalletBalance, 'IDR', isPrivacyMode)}
           </p>
           <span className="text-[11px] text-slate-500">{ewalletAccounts.length} wallet(s)</span>
@@ -138,7 +138,7 @@ export const AccountsView: React.FC = () => {
           return (
             <div
               key={acc.id}
-              className="relative p-5 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-950 border border-slate-800 hover:border-slate-700 shadow-lg transition-all group overflow-hidden"
+              className="relative p-5 rounded-2xl bg-white dark:bg-gradient-to-br dark:from-slate-900 dark:to-slate-950 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 shadow-md dark:shadow-lg transition-all group overflow-hidden"
             >
               {/* Top Accent Stripe */}
               <div
@@ -150,15 +150,15 @@ export const AccountsView: React.FC = () => {
                 <div className="flex items-center gap-3">
                   <div
                     className="w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-sm"
-                    style={{ backgroundColor: `${accentColor}30`, color: accentColor }}
+                    style={{ backgroundColor: `${accentColor}25`, color: accentColor }}
                   >
                     {acc.type === 'bank' && <Landmark className="w-5 h-5" />}
                     {acc.type === 'cash' && <Coins className="w-5 h-5" />}
                     {acc.type === 'ewallet' && <Wallet className="w-5 h-5" />}
                   </div>
                   <div>
-                    <h3 className="font-bold text-white text-base leading-tight">{acc.name}</h3>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                    <h3 className="font-bold text-slate-900 dark:text-white text-base leading-tight">{acc.name}</h3>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                       {acc.type}
                     </span>
                   </div>
@@ -170,7 +170,7 @@ export const AccountsView: React.FC = () => {
                       setEditingAccount(acc);
                       setIsAddAccountOpen(true);
                     }}
-                    className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+                    className="p-1.5 rounded-lg text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
                     title="Edit account"
                   >
                     <Edit2 className="w-3.5 h-3.5" />
@@ -180,8 +180,8 @@ export const AccountsView: React.FC = () => {
 
               {/* Balance */}
               <div className="space-y-1 mb-5">
-                <span className="text-xs text-slate-400 font-medium">Available Balance</span>
-                <p className="text-2xl font-black text-white font-mono tracking-tight">
+                <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Available Balance</span>
+                <p className="text-2xl font-black text-slate-900 dark:text-white font-mono tracking-tight">
                   {formatMasked(acc.balance, 'IDR', isPrivacyMode)}
                 </p>
                 {acc.accountNumber && (
@@ -190,15 +190,15 @@ export const AccountsView: React.FC = () => {
               </div>
 
               {/* Quick Card Action Buttons */}
-              <div className="grid grid-cols-2 gap-2 pt-3 border-t border-slate-800/80">
+              <div className="grid grid-cols-2 gap-2 pt-3 border-t border-slate-200 dark:border-slate-800/80">
                 <button
                   onClick={() => {
                     setTransferInitialMode('account_to_account');
                     setIsTransferOpen(true);
                   }}
-                  className="flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-xl bg-slate-800/70 hover:bg-slate-800 text-slate-300 hover:text-white text-xs font-semibold transition-colors cursor-pointer"
+                  className="flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800/70 dark:hover:bg-slate-800 text-slate-700 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white border border-slate-200 dark:border-transparent text-xs font-semibold transition-colors cursor-pointer"
                 >
-                  <ArrowRightLeft className="w-3.5 h-3.5 text-blue-400" />
+                  <ArrowRightLeft className="w-3.5 h-3.5 text-blue-500 dark:text-blue-400" />
                   <span>Transfer</span>
                 </button>
 
@@ -207,9 +207,9 @@ export const AccountsView: React.FC = () => {
                     setTransferInitialMode('bank_to_investment');
                     setIsTransferOpen(true);
                   }}
-                  className="flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-xl bg-slate-800/70 hover:bg-slate-800 text-slate-300 hover:text-white text-xs font-semibold transition-colors cursor-pointer"
+                  className="flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800/70 dark:hover:bg-slate-800 text-slate-700 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white border border-slate-200 dark:border-transparent text-xs font-semibold transition-colors cursor-pointer"
                 >
-                  <TrendingUp className="w-3.5 h-3.5 text-indigo-400" />
+                  <TrendingUp className="w-3.5 h-3.5 text-indigo-500 dark:text-indigo-400" />
                   <span>Fund Invest</span>
                 </button>
               </div>

@@ -75,20 +75,20 @@ export const DashboardView: React.FC = () => {
       )}
 
       {/* HERO NET WORTH CARD */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800/80 p-6 sm:p-7 shadow-xl">
+      <div className="relative overflow-hidden rounded-3xl bg-white dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 border border-slate-200 dark:border-slate-800/80 p-6 sm:p-7 shadow-md dark:shadow-xl">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 Total Net Worth
               </span>
               <button
                 onClick={togglePrivacyMode}
-                className="p-1 rounded-md text-slate-400 hover:text-white transition-colors cursor-pointer"
+                className="p-1 rounded-md text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors cursor-pointer"
                 title={isPrivacyMode ? 'Unmask nominal' : 'Hide nominal for public view'}
               >
                 {isPrivacyMode ? (
-                  <EyeOff className="w-3.5 h-3.5 text-amber-400" />
+                  <EyeOff className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400" />
                 ) : (
                   <Eye className="w-3.5 h-3.5" />
                 )}
@@ -97,11 +97,11 @@ export const DashboardView: React.FC = () => {
 
             {/* Big Net Worth Nominal */}
             <div className="flex flex-wrap items-baseline gap-3">
-              <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-white font-mono">
+              <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-slate-900 dark:text-white font-mono">
                 {formatMasked(netWorthIdr, 'IDR', isPrivacyMode)}
               </h2>
               {!isPrivacyMode && (
-                <span className="text-xs sm:text-sm font-semibold text-slate-400 font-mono">
+                <span className="text-xs sm:text-sm font-semibold text-slate-500 dark:text-slate-400 font-mono">
                   &asymp; {formatUsd(netWorthUsd)}
                 </span>
               )}
@@ -109,15 +109,15 @@ export const DashboardView: React.FC = () => {
 
             {/* Clean Secondary Stat Summary */}
             <div className="flex flex-wrap items-center gap-3 pt-1 text-xs">
-              <span className="text-slate-400">
-                Liquid: <strong className="text-slate-200 font-mono">{formatMasked(liquidCashIdr, 'IDR', isPrivacyMode)}</strong>
+              <span className="text-slate-600 dark:text-slate-400">
+                Liquid: <strong className="text-slate-900 dark:text-slate-200 font-mono">{formatMasked(liquidCashIdr, 'IDR', isPrivacyMode)}</strong>
               </span>
-              <span className="text-slate-600">•</span>
-              <span className="text-slate-400">
-                Invested: <strong className="text-slate-200 font-mono">{formatMasked(investmentValueIdr, 'IDR', isPrivacyMode)}</strong>
+              <span className="text-slate-300 dark:text-slate-600">•</span>
+              <span className="text-slate-600 dark:text-slate-400">
+                Invested: <strong className="text-slate-900 dark:text-slate-200 font-mono">{formatMasked(investmentValueIdr, 'IDR', isPrivacyMode)}</strong>
               </span>
-              <span className="text-slate-600">•</span>
-              <span className={`font-bold font-mono ${unrealizedPnlIdr >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+              <span className="text-slate-300 dark:text-slate-600">•</span>
+              <span className={`font-bold font-mono ${unrealizedPnlIdr >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
                 {unrealizedPnlIdr >= 0 ? '+' : ''}{pnlPercent.toFixed(1)}% ROI
               </span>
             </div>
@@ -131,17 +131,17 @@ export const DashboardView: React.FC = () => {
                   const investedRatio = 100 - liquidRatio;
                   return (
                     <>
-                      <div className="flex items-center justify-between text-[11px] text-slate-400">
+                      <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
                         <span className="flex items-center gap-1.5">
-                          <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0" />
+                          <span className="w-2 h-2 rounded-full bg-emerald-500 dark:bg-emerald-400 shrink-0" />
                           <span>Liquid Cash ({liquidRatio}%)</span>
                         </span>
                         <span className="flex items-center gap-1.5">
-                          <span className="w-2 h-2 rounded-full bg-indigo-400 shrink-0" />
+                          <span className="w-2 h-2 rounded-full bg-indigo-500 dark:bg-indigo-400 shrink-0" />
                           <span>Investasi ({investedRatio}%)</span>
                         </span>
                       </div>
-                      <div className="w-full h-2 rounded-full bg-slate-800/80 overflow-hidden flex gap-0.5 p-0.5 border border-slate-700/50">
+                      <div className="w-full h-2 rounded-full bg-slate-100 dark:bg-slate-800/80 overflow-hidden flex gap-0.5 p-0.5 border border-slate-200 dark:border-slate-700/50">
                         <div
                           style={{ width: `${liquidRatio}%` }}
                           className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-teal-400 transition-all duration-500"
@@ -166,9 +166,9 @@ export const DashboardView: React.FC = () => {
                 setTransactionInitialType('expense');
                 setIsAddExpenseOpen(true);
               }}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs border border-slate-700/80 transition-all cursor-pointer"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white font-semibold text-xs border border-slate-300 dark:border-slate-700/80 shadow-sm transition-all cursor-pointer"
             >
-              <Receipt className="w-3.5 h-3.5 text-rose-400" />
+              <Receipt className="w-3.5 h-3.5 text-rose-500 dark:text-rose-400" />
               <span>+ Expense</span>
             </button>
 
@@ -178,9 +178,9 @@ export const DashboardView: React.FC = () => {
                 setTransactionInitialType('income');
                 setIsAddExpenseOpen(true);
               }}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs border border-slate-700/80 transition-all cursor-pointer"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white font-semibold text-xs border border-slate-300 dark:border-slate-700/80 shadow-sm transition-all cursor-pointer"
             >
-              <ArrowDownRight className="w-3.5 h-3.5 text-emerald-400" />
+              <ArrowDownRight className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
               <span>+ Income</span>
             </button>
 
@@ -189,9 +189,9 @@ export const DashboardView: React.FC = () => {
                 setTransferInitialMode('bank_to_investment');
                 setIsTransferOpen(true);
               }}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs border border-slate-700/80 transition-all cursor-pointer"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white font-semibold text-xs border border-slate-300 dark:border-slate-700/80 shadow-sm transition-all cursor-pointer"
             >
-              <TrendingUp className="w-3.5 h-3.5 text-indigo-400" />
+              <TrendingUp className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
               <span>Fund Invest</span>
             </button>
 
@@ -200,9 +200,9 @@ export const DashboardView: React.FC = () => {
                 setTransferInitialMode('account_to_account');
                 setIsTransferOpen(true);
               }}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs border border-slate-700/80 transition-all cursor-pointer"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white font-semibold text-xs border border-slate-300 dark:border-slate-700/80 shadow-sm transition-all cursor-pointer"
             >
-              <ArrowRightLeft className="w-3.5 h-3.5 text-blue-400" />
+              <ArrowRightLeft className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
               <span>Transfer</span>
             </button>
           </div>
@@ -405,7 +405,7 @@ export const DashboardView: React.FC = () => {
             {accounts.map((acc) => (
               <div
                 key={acc.id}
-                className="flex items-center justify-between p-3.5 rounded-xl bg-slate-950/70 border border-slate-800/80 hover:border-slate-700 transition-all"
+                className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700 transition-all shadow-sm"
               >
                 <div className="flex items-center gap-3">
                   <div
@@ -414,8 +414,8 @@ export const DashboardView: React.FC = () => {
                   />
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-white text-sm">{acc.name}</span>
-                      <span className="text-[10px] px-1.5 py-0.2 rounded font-bold uppercase tracking-wider bg-slate-800 text-slate-400">
+                      <span className="font-bold text-slate-900 dark:text-white text-sm">{acc.name}</span>
+                      <span className="text-[10px] px-1.5 py-0.2 rounded font-bold uppercase tracking-wider bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-400">
                         {acc.type}
                       </span>
                     </div>
@@ -426,7 +426,7 @@ export const DashboardView: React.FC = () => {
                 </div>
 
                 <div className="text-right">
-                  <span className="text-sm sm:text-base font-extrabold text-emerald-400 font-mono">
+                  <span className="text-sm sm:text-base font-extrabold text-emerald-600 dark:text-emerald-400 font-mono">
                     {formatMasked(acc.balance, 'IDR', isPrivacyMode)}
                   </span>
                 </div>

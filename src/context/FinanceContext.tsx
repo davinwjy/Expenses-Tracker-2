@@ -30,6 +30,9 @@ interface FinanceContextType {
   isLoading: boolean;
   isPrivacyMode: boolean;
   togglePrivacyMode: () => void;
+  theme: 'dark' | 'light';
+  toggleTheme: () => void;
+  setTheme: (theme: 'dark' | 'light') => void;
   activeTab: 'dashboard' | 'expenses' | 'accounts' | 'investments' | 'stats' | 'admin';
   setActiveTab: (tab: 'dashboard' | 'expenses' | 'accounts' | 'investments' | 'stats' | 'admin') => void;
   announcement: SystemAnnouncement | null;
@@ -151,6 +154,53 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
   useEffect(() => {
     refreshAnnouncement();
   }, [refreshAnnouncement]);
+
+  // Theme mode: 'dark' | 'light'
+  const [theme, setThemeState] = useState<'dark' | 'light'>(() => {
+    try {
+      const saved = localStorage.getItem('wealthtrack_theme');
+      if (saved === 'light' || saved === 'dark') return saved;
+    } catch {}
+    return 'dark';
+  });
+
+  const applyTheme = useCallback((targetTheme: 'dark' | 'light') => {
+    const root = document.documentElement;
+    if (targetTheme === 'dark') {
+      root.classList.add('dark');
+      root.classList.remove('light');
+      root.setAttribute('data-theme', 'dark');
+      root.style.colorScheme = 'dark';
+    } else {
+      root.classList.add('light');
+      root.classList.remove('dark');
+      root.setAttribute('data-theme', 'light');
+      root.style.colorScheme = 'light';
+    }
+  }, []);
+
+  useEffect(() => {
+    applyTheme(theme);
+  }, [theme, applyTheme]);
+
+  const setTheme = useCallback((newTheme: 'dark' | 'light') => {
+    setThemeState(newTheme);
+    try {
+      localStorage.setItem('wealthtrack_theme', newTheme);
+    } catch {}
+    applyTheme(newTheme);
+    if (user) {
+      if (isFirebase && settings) {
+        firestoreService.saveSettings({ ...settings, theme: newTheme });
+      } else {
+        api.updateSettings({ theme: newTheme }).catch(() => {});
+      }
+    }
+  }, [applyTheme, user, isFirebase, settings]);
+
+  const toggleTheme = useCallback(() => {
+    setTheme(theme === 'dark' ? 'light' : 'dark');
+  }, [theme, setTheme]);
 
   // Privacy mode persistent in localStorage
   const [isPrivacyMode, setIsPrivacyMode] = useState<boolean>(() => {
@@ -721,6 +771,9 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
         isLoading,
         isPrivacyMode,
         togglePrivacyMode,
+        theme,
+        toggleTheme,
+        setTheme,
         activeTab,
         setActiveTab,
         announcement,

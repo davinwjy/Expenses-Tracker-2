@@ -68,7 +68,7 @@ const MainAppContent: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0e17] text-slate-100 flex flex-col">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#0a0e17] text-slate-900 dark:text-slate-100 flex flex-col transition-colors duration-200">
       {/* Modern Desktop Left Sidebar & Contextual Header */}
       <div className="flex flex-row min-h-screen">
         <Sidebar
