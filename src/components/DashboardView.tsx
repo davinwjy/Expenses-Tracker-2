@@ -112,11 +112,11 @@ export const DashboardView: React.FC = () => {
               <span className="text-slate-400">
                 Liquid: <strong className="text-slate-200 font-mono">{formatMasked(liquidCashIdr, 'IDR', isPrivacyMode)}</strong>
               </span>
-              <span className="text-slate-600">&bull;</span>
+              <span className="text-slate-600">•</span>
               <span className="text-slate-400">
                 Invested: <strong className="text-slate-200 font-mono">{formatMasked(investmentValueIdr, 'IDR', isPrivacyMode)}</strong>
               </span>
-              <span className="text-slate-600">&bull;</span>
+              <span className="text-slate-600">•</span>
               <span className={`font-bold font-mono ${unrealizedPnlIdr >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                 {unrealizedPnlIdr >= 0 ? '+' : ''}{pnlPercent.toFixed(1)}% ROI
               </span>
@@ -505,9 +505,16 @@ export const DashboardView: React.FC = () => {
                             ? `Transfer to ${destAcc?.name || 'Cash'}`
                             : tx.category || 'General'}
                         </p>
-                        <p className="text-[11px] text-slate-400">
-                          {sourceAcc?.name || 'Bank'} &bull; {formatDate(tx.date)}
-                          {tx.notes ? ` &bull; ${tx.notes}` : ''}
+                        <p className="text-[11px] text-slate-400 flex items-center gap-1.5 flex-wrap">
+                          <span>{sourceAcc?.name || 'Bank'}</span>
+                          <span>•</span>
+                          <span>{formatDate(tx.date)}</span>
+                          {tx.notes && (
+                            <>
+                              <span>•</span>
+                              <span className="italic text-slate-300 truncate max-w-[200px]">"{tx.notes}"</span>
+                            </>
+                          )}
                         </p>
                       </div>
                     </div>

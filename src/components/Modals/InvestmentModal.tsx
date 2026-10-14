@@ -227,7 +227,7 @@ export const InvestmentModal: React.FC = () => {
               ))}
             </div>
             <p className="text-[11px] text-slate-400 mt-1.5">
-              Denomination: <strong className="text-emerald-400">{selectedCategoryMeta.currency}</strong> &bull; {selectedCategoryMeta.example}
+              Denomination: <strong className="text-emerald-400">{selectedCategoryMeta.currency}</strong> • {selectedCategoryMeta.example}
             </p>
           </div>
 

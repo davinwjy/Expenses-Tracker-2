@@ -318,14 +318,14 @@ export const ExpensesView: React.FC = () => {
                         <CreditCard className="w-3 h-3 text-slate-500" />
                         {sourceAcc?.name || 'Account'}
                       </span>
-                      <span>&bull;</span>
+                      <span>•</span>
                       <span className="flex items-center gap-1 font-mono">
                         <Calendar className="w-3 h-3 text-slate-500" />
                         {formatDate(tx.date)}
                       </span>
                       {tx.notes && (
                         <>
-                          <span>&bull;</span>
+                          <span>•</span>
                           <span className="italic text-slate-300">"{tx.notes}"</span>
                         </>
                       )}

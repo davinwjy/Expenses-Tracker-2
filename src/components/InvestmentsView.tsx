@@ -239,7 +239,7 @@ export const InvestmentsView: React.FC = () => {
                           <span className="font-mono text-slate-300">
                             {inv.units} {inv.category === 'Bitcoin' ? 'BTC' : 'units'}
                           </span>
-                          <span>&bull;</span>
+                          <span>•</span>
                         </>
                       )}
                       <span>Cost: </span>
@@ -248,8 +248,8 @@ export const InvestmentsView: React.FC = () => {
                       </span>
                       {inv.notes && (
                         <>
-                          <span>&bull;</span>
-                          <span className="italic text-slate-400 truncate max-w-xs">&ldquo;{inv.notes}&rdquo;</span>
+                          <span>•</span>
+                          <span className="italic text-slate-400 truncate max-w-xs">"{inv.notes}"</span>
                         </>
                       )}
                     </div>
