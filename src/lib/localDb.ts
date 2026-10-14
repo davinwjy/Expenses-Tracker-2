@@ -5,6 +5,10 @@ import {
   Investment,
   UserSettings,
   DashboardStats,
+  AdminOverviewStats,
+  AdminUserListItem,
+  SystemSettings,
+  SystemAnnouncement,
 } from '../types';
 
 interface LocalStorageSchema {
@@ -830,6 +834,175 @@ export const localDb = {
       categoryAllocations,
       expenseByCategory,
       expenseByAccount,
+    };
+  },
+
+  // Public Announcement
+  async getPublicAnnouncement(): Promise<{ announcement: SystemAnnouncement; maintenanceMode: boolean }> {
+    const rawAnn = localStorage.getItem('wealthtrack_system_announcement');
+    let announcement: SystemAnnouncement = {
+      id: 'default',
+      message: '',
+      type: 'info',
+      enabled: false,
+      updatedAt: new Date().toISOString(),
+    };
+    if (rawAnn) {
+      try {
+        announcement = JSON.parse(rawAnn);
+      } catch {}
+    }
+    const maintenanceMode = localStorage.getItem('wealthtrack_maintenance_mode') === 'true';
+    return { announcement, maintenanceMode };
+  },
+
+  // Admin Overview
+  async getAdminOverview(): Promise<AdminOverviewStats> {
+    const store = getStore();
+    const totalUsers = store.users.length;
+    const totalAccounts = store.accounts.length;
+    const totalTransactions = store.transactions.length;
+    const totalInvestments = store.investments.length;
+    const totalVolumeIdr = store.transactions.reduce((sum, t) => sum + (t.amount || 0), 0);
+
+    const totalCashIdr = store.accounts.reduce((sum, a) => sum + (a.balance || 0), 0);
+    const totalInvestmentsIdr = store.investments.reduce((sum, inv) => {
+      const val = inv.currentValue || 0;
+      return sum + (inv.currency === 'USD' ? val * 15850 : val);
+    }, 0);
+
+    return {
+      totalUsers,
+      totalAccounts,
+      totalTransactions,
+      totalInvestments,
+      totalVolumeIdr,
+      totalTrackedAssetsIdr: totalCashIdr + totalInvestmentsIdr,
+      serverStatus: 'online',
+      dbType: 'Local Indexed Database (Synced)',
+      uptimeSeconds: 3600,
+      currentUsdRate: 15850,
+      adminCount: 1,
+      registeredAdmins: ['davinwijaya16@gmail.com', 'davinwijaya1996@gmail.com'],
+    };
+  },
+
+  async getAdminUsers(): Promise<{ users: AdminUserListItem[] }> {
+    const store = getStore();
+    const list: AdminUserListItem[] = store.users.map(u => {
+      const userAccounts = store.accounts.filter(a => a.userId === u.id);
+      const userTxs = store.transactions.filter(t => t.userId === u.id);
+      const userInvs = store.investments.filter(i => i.userId === u.id);
+
+      const cashIdr = userAccounts.reduce((sum, a) => sum + (a.balance || 0), 0);
+      const invIdr = userInvs.reduce((sum, inv) => {
+        const val = inv.currentValue || 0;
+        return sum + (inv.currency === 'USD' ? val * 15850 : val);
+      }, 0);
+
+      const isAdm = u.email === 'davinwijaya16@gmail.com' || u.email === 'davinwijaya1996@gmail.com' || u.role === 'admin';
+
+      return {
+        id: u.id,
+        name: u.name,
+        email: u.email,
+        role: isAdm ? 'admin' : 'user',
+        createdAt: u.createdAt || new Date().toISOString(),
+        accountsCount: userAccounts.length,
+        transactionsCount: userTxs.length,
+        investmentsCount: userInvs.length,
+        totalNetWorthIdr: cashIdr + invIdr,
+      };
+    });
+
+    return { users: list };
+  },
+
+  async setAdminUserRole(id: string, role: 'admin' | 'user'): Promise<{ success: boolean; user: any }> {
+    const store = getStore();
+    const user = store.users.find(u => u.id === id);
+    if (user) {
+      user.role = role;
+      saveStore(store);
+    }
+    return { success: true, user };
+  },
+
+  async addAdminEmail(email: string): Promise<{ success: boolean; adminEmails: string[] }> {
+    const clean = email.toLowerCase().trim();
+    const list = ['davinwijaya16@gmail.com', 'davinwijaya1996@gmail.com'];
+    if (!list.includes(clean)) list.push(clean);
+    return { success: true, adminEmails: list };
+  },
+
+  async removeAdminEmail(email: string): Promise<{ success: boolean; adminEmails: string[] }> {
+    const clean = email.toLowerCase().trim();
+    const list = ['davinwijaya16@gmail.com', 'davinwijaya1996@gmail.com'].filter(e => e !== clean);
+    return { success: true, adminEmails: list };
+  },
+
+  async deleteAdminUser(id: string): Promise<{ success: boolean; message: string }> {
+    const store = getStore();
+    store.users = store.users.filter(u => u.id !== id);
+    store.accounts = store.accounts.filter(a => a.userId !== id);
+    store.transactions = store.transactions.filter(t => t.userId !== id);
+    store.investments = store.investments.filter(i => i.userId !== id);
+    saveStore(store);
+    return { success: true, message: 'User deleted' };
+  },
+
+  async getAdminTransactions(limit: number = 100): Promise<{ transactions: any[] }> {
+    const store = getStore();
+    const list = store.transactions.map(t => {
+      const user = store.users.find(u => u.id === t.userId);
+      const acc = store.accounts.find(a => a.id === t.accountId);
+      return {
+        ...t,
+        userName: user?.name || 'Local User',
+        userEmail: user?.email || 'user@example.com',
+        accountName: acc?.name || 'Account',
+      };
+    });
+    list.sort((a, b) => new Date(b.date + ' ' + b.createdAt).getTime() - new Date(a.date + ' ' + a.createdAt).getTime());
+    return { transactions: list.slice(0, limit) };
+  },
+
+  async getAdminSystemSettings(): Promise<{ settings: SystemSettings }> {
+    const { announcement, maintenanceMode } = await this.getPublicAnnouncement();
+    return {
+      settings: {
+        announcement,
+        maintenanceMode,
+        allowNewRegistrations: true,
+        adminEmails: ['davinwijaya16@gmail.com', 'davinwijaya1996@gmail.com', 'davin@wealthtrack.app'],
+        defaultUsdIdrRate: 15850,
+      },
+    };
+  },
+
+  async updateAdminSystemSettings(data: Partial<SystemSettings>): Promise<{ success: boolean; settings: SystemSettings }> {
+    if (data.announcement) {
+      localStorage.setItem('wealthtrack_system_announcement', JSON.stringify(data.announcement));
+    }
+    if (data.maintenanceMode !== undefined) {
+      localStorage.setItem('wealthtrack_maintenance_mode', String(data.maintenanceMode));
+    }
+    const current = await this.getAdminSystemSettings();
+    return { success: true, settings: { ...current.settings, ...data } };
+  },
+
+  async exportDatabase(): Promise<any> {
+    const store = getStore();
+    return {
+      exportTimestamp: new Date().toISOString(),
+      platform: 'WealthTrack Pro',
+      stats: {
+        users: store.users.length,
+        accounts: store.accounts.length,
+        transactions: store.transactions.length,
+        investments: store.investments.length,
+      },
+      ...store,
     };
   },
 };

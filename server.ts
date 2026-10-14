@@ -36,7 +36,16 @@ interface AuthenticatedRequest extends Request {
   user?: {
     id: string;
     email: string;
+    role?: 'admin' | 'user';
   };
+}
+
+// Check if email has admin privileges
+function isUserAdminEmail(email?: string): boolean {
+  if (!email) return false;
+  const clean = email.toLowerCase().trim();
+  const configured = db.data.systemSettings?.adminEmails || ['davinwijaya16@gmail.com', 'davinwijaya1996@gmail.com', 'davin@wealthtrack.app'];
+  return configured.map(e => e.toLowerCase().trim()).includes(clean);
 }
 
 // Authentication middleware
@@ -51,11 +60,30 @@ function authenticateToken(req: AuthenticatedRequest, res: Response, next: NextF
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as { id: string; email: string };
-    req.user = decoded;
+    const userInDb = db.data.users.find(u => u.id === decoded.id);
+    const role = (userInDb?.role === 'admin' || isUserAdminEmail(decoded.email)) ? 'admin' : 'user';
+    req.user = { ...decoded, role };
     next();
   } catch (err) {
     res.status(403).json({ error: 'Invalid or expired token' });
   }
+}
+
+// Admin-only middleware
+function authenticateAdmin(req: AuthenticatedRequest, res: Response, next: NextFunction): void {
+  authenticateToken(req, res, () => {
+    const userInDb = db.data.users.find(u => u.id === req.user?.id);
+    const email = req.user?.email || userInDb?.email;
+    const hasAdminRole = userInDb?.role === 'admin' || isUserAdminEmail(email);
+
+    if (hasAdminRole) {
+      next();
+    } else {
+      res.status(403).json({
+        error: 'Forbidden: Admin access required. Only authorized administrators (such as davinwijaya16@gmail.com) can manage this platform.',
+      });
+    }
+  });
 }
 
 // Helper to get exchange rate for user
@@ -92,11 +120,14 @@ app.post('/api/auth/register', (req: Request, res: Response): void => {
     const passwordHash = bcrypt.hashSync(password, salt);
     const userId = 'usr_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
 
+    const role = isUserAdminEmail(cleanEmail) ? 'admin' : 'user';
+
     const newUser: User = {
       id: userId,
       email: cleanEmail,
       passwordHash,
       name: name ? String(name).trim() : cleanEmail.split('@')[0],
+      role,
       createdAt: new Date().toISOString(),
     };
 
@@ -271,6 +302,7 @@ app.post('/api/auth/register', (req: Request, res: Response): void => {
         id: newUser.id,
         email: newUser.email,
         name: newUser.name,
+        role: newUser.role,
       },
     });
   } catch (error) {
@@ -300,6 +332,13 @@ app.post('/api/auth/login', (req: Request, res: Response): void => {
       return;
     }
 
+    // Automatically ensure davinwijaya16@gmail.com and configured emails have role admin
+    const role = (user.role === 'admin' || isUserAdminEmail(user.email)) ? 'admin' : 'user';
+    if (user.role !== role) {
+      user.role = role;
+      db.save();
+    }
+
     const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '30d' });
 
     res.json({
@@ -308,6 +347,7 @@ app.post('/api/auth/login', (req: Request, res: Response): void => {
         id: user.id,
         email: user.email,
         name: user.name,
+        role,
       },
     });
   } catch (error) {
@@ -322,11 +362,13 @@ app.get('/api/auth/me', authenticateToken, (req: AuthenticatedRequest, res: Resp
     res.status(404).json({ error: 'User not found' });
     return;
   }
+  const role = (user.role === 'admin' || isUserAdminEmail(user.email)) ? 'admin' : 'user';
   res.json({
     user: {
       id: user.id,
       email: user.email,
       name: user.name,
+      role,
       createdAt: user.createdAt,
     },
   });
@@ -1071,6 +1113,346 @@ app.get('/api/stats/dashboard', authenticateToken, (req: AuthenticatedRequest, r
   } catch (err) {
     console.error('Stats error:', err);
     res.status(500).json({ error: 'Failed to fetch dashboard stats' });
+  }
+});
+
+// -------------------------------------------------------------
+// PUBLIC SYSTEM ANNOUNCEMENTS & STATUS
+// -------------------------------------------------------------
+
+app.get('/api/public/announcement', (_req: Request, res: Response): void => {
+  const settings = db.data.systemSettings;
+  res.json({
+    announcement: settings?.announcement || {
+      id: 'default',
+      message: '',
+      type: 'info',
+      enabled: false,
+      updatedAt: new Date().toISOString(),
+    },
+    maintenanceMode: settings?.maintenanceMode || false,
+  });
+});
+
+// -------------------------------------------------------------
+// ADMIN MANAGEMENT CONSOLE ROUTES
+// -------------------------------------------------------------
+
+app.get('/api/admin/overview', authenticateAdmin, (_req: AuthenticatedRequest, res: Response): void => {
+  try {
+    const totalUsers = db.data.users.length;
+    const totalAccounts = db.data.accounts.length;
+    const totalTransactions = db.data.transactions.length;
+    const totalInvestments = db.data.investments.length;
+
+    const totalVolumeIdr = db.data.transactions.reduce((sum, t) => sum + (t.amount || 0), 0);
+
+    // Calculate total net worth tracked across all platform users
+    const defaultRate = db.data.systemSettings?.defaultUsdIdrRate || 15850;
+    const totalCashIdr = db.data.accounts.reduce((sum, a) => sum + (a.balance || 0), 0);
+    const totalInvestmentsIdr = db.data.investments.reduce((sum, inv) => {
+      const val = inv.currentValue || 0;
+      return sum + (inv.currency === 'USD' ? val * defaultRate : val);
+    }, 0);
+    const totalTrackedAssetsIdr = totalCashIdr + totalInvestmentsIdr;
+
+    const registeredAdmins = db.data.systemSettings?.adminEmails || ['davinwijaya16@gmail.com', 'davinwijaya1996@gmail.com', 'davin@wealthtrack.app'];
+    const adminCount = db.data.users.filter(u => u.role === 'admin' || isUserAdminEmail(u.email)).length;
+
+    res.json({
+      totalUsers,
+      totalAccounts,
+      totalTransactions,
+      totalInvestments,
+      totalVolumeIdr,
+      totalTrackedAssetsIdr,
+      serverStatus: 'online',
+      dbType: 'JSON Persistent Store (server/db.ts)',
+      uptimeSeconds: Math.floor(process.uptime()),
+      currentUsdRate: defaultRate,
+      adminCount: Math.max(adminCount, registeredAdmins.length),
+      registeredAdmins,
+    });
+  } catch (err: any) {
+    console.error('Admin overview error:', err);
+    res.status(500).json({ error: 'Failed to fetch admin overview' });
+  }
+});
+
+app.get('/api/admin/users', authenticateAdmin, (_req: AuthenticatedRequest, res: Response): void => {
+  try {
+    const defaultRate = db.data.systemSettings?.defaultUsdIdrRate || 15850;
+
+    const usersList = db.data.users.map(u => {
+      const userAccounts = db.data.accounts.filter(a => a.userId === u.id);
+      const userTxs = db.data.transactions.filter(t => t.userId === u.id);
+      const userInvs = db.data.investments.filter(i => i.userId === u.id);
+
+      const cashIdr = userAccounts.reduce((sum, a) => sum + (a.balance || 0), 0);
+      const invIdr = userInvs.reduce((sum, inv) => {
+        const val = inv.currentValue || 0;
+        return sum + (inv.currency === 'USD' ? val * defaultRate : val);
+      }, 0);
+
+      const role = (u.role === 'admin' || isUserAdminEmail(u.email)) ? 'admin' : 'user';
+
+      return {
+        id: u.id,
+        name: u.name,
+        email: u.email,
+        role,
+        createdAt: u.createdAt,
+        accountsCount: userAccounts.length,
+        transactionsCount: userTxs.length,
+        investmentsCount: userInvs.length,
+        totalNetWorthIdr: cashIdr + invIdr,
+      };
+    });
+
+    res.json({ users: usersList });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch users list' });
+  }
+});
+
+app.post('/api/admin/users/:id/role', authenticateAdmin, (req: AuthenticatedRequest, res: Response): void => {
+  try {
+    const { id } = req.params;
+    const { role } = req.body;
+
+    if (role !== 'admin' && role !== 'user') {
+      res.status(400).json({ error: "Role must be 'admin' or 'user'" });
+      return;
+    }
+
+    const user = db.data.users.find(u => u.id === id);
+    if (!user) {
+      res.status(404).json({ error: 'User not found' });
+      return;
+    }
+
+    user.role = role;
+
+    // If making admin, ensure email is in adminEmails list too
+    if (role === 'admin' && db.data.systemSettings) {
+      if (!db.data.systemSettings.adminEmails.includes(user.email)) {
+        db.data.systemSettings.adminEmails.push(user.email);
+      }
+    }
+
+    db.save();
+    res.json({ success: true, user: { id: user.id, email: user.email, name: user.name, role: user.role } });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to update user role' });
+  }
+});
+
+app.post('/api/admin/add-admin-email', authenticateAdmin, (req: AuthenticatedRequest, res: Response): void => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      res.status(400).json({ error: 'Email is required' });
+      return;
+    }
+    const cleanEmail = String(email).trim().toLowerCase();
+
+    if (!db.data.systemSettings) {
+      db.data.systemSettings = {
+        announcement: { id: 'default', message: '', type: 'info', enabled: false, updatedAt: new Date().toISOString() },
+        maintenanceMode: false,
+        allowNewRegistrations: true,
+        adminEmails: ['davinwijaya16@gmail.com', 'davinwijaya1996@gmail.com', 'davin@wealthtrack.app'],
+        defaultUsdIdrRate: 15850,
+      };
+    }
+
+    if (!db.data.systemSettings.adminEmails.includes(cleanEmail)) {
+      db.data.systemSettings.adminEmails.push(cleanEmail);
+    }
+
+    // Also update user record if user already exists
+    const existing = db.data.users.find(u => u.email === cleanEmail);
+    if (existing) {
+      existing.role = 'admin';
+    }
+
+    db.save();
+    res.json({ success: true, adminEmails: db.data.systemSettings.adminEmails });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to add admin email' });
+  }
+});
+
+app.delete('/api/admin/remove-admin-email', authenticateAdmin, (req: AuthenticatedRequest, res: Response): void => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      res.status(400).json({ error: 'Email is required' });
+      return;
+    }
+    const cleanEmail = String(email).trim().toLowerCase();
+
+    // Prevent removing the primary master admin davinwijaya16@gmail.com
+    if (cleanEmail === 'davinwijaya16@gmail.com') {
+      res.status(400).json({ error: 'Cannot remove primary super admin davinwijaya16@gmail.com' });
+      return;
+    }
+
+    if (db.data.systemSettings) {
+      db.data.systemSettings.adminEmails = db.data.systemSettings.adminEmails.filter(e => e.toLowerCase() !== cleanEmail);
+    }
+
+    const existing = db.data.users.find(u => u.email === cleanEmail);
+    if (existing) {
+      existing.role = 'user';
+    }
+
+    db.save();
+    res.json({ success: true, adminEmails: db.data.systemSettings?.adminEmails || [] });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to remove admin email' });
+  }
+});
+
+app.delete('/api/admin/users/:id', authenticateAdmin, (req: AuthenticatedRequest, res: Response): void => {
+  try {
+    const { id } = req.params;
+    const userIndex = db.data.users.findIndex(u => u.id === id);
+    if (userIndex === -1) {
+      res.status(404).json({ error: 'User not found' });
+      return;
+    }
+
+    const targetUser = db.data.users[userIndex];
+    if (targetUser.email === 'davinwijaya16@gmail.com') {
+      res.status(400).json({ error: 'Cannot delete master super admin account' });
+      return;
+    }
+
+    // Delete user's accounts, transactions, investments, settings
+    db.data.users.splice(userIndex, 1);
+    db.data.accounts = db.data.accounts.filter(a => a.userId !== id);
+    db.data.transactions = db.data.transactions.filter(t => t.userId !== id);
+    db.data.investments = db.data.investments.filter(i => i.userId !== id);
+    db.data.settings = db.data.settings.filter(s => s.userId !== id);
+
+    db.save();
+    res.json({ success: true, message: `User ${targetUser.email} and all related records deleted successfully` });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to delete user' });
+  }
+});
+
+app.get('/api/admin/transactions', authenticateAdmin, (req: AuthenticatedRequest, res: Response): void => {
+  try {
+    const limit = Number(req.query.limit) || 100;
+
+    const list = db.data.transactions.map(t => {
+      const user = db.data.users.find(u => u.id === t.userId);
+      const acc = db.data.accounts.find(a => a.id === t.accountId);
+      return {
+        ...t,
+        userName: user?.name || 'Unknown User',
+        userEmail: user?.email || 'Unknown',
+        accountName: acc?.name || 'Account',
+      };
+    });
+
+    list.sort((a, b) => new Date(b.date + ' ' + b.createdAt).getTime() - new Date(a.date + ' ' + a.createdAt).getTime());
+
+    res.json({ transactions: list.slice(0, limit) });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch global transactions' });
+  }
+});
+
+app.get('/api/admin/system-settings', authenticateAdmin, (_req: AuthenticatedRequest, res: Response): void => {
+  try {
+    const settings = db.data.systemSettings || {
+      announcement: { id: 'default', message: '', type: 'info', enabled: false, updatedAt: new Date().toISOString() },
+      maintenanceMode: false,
+      allowNewRegistrations: true,
+      adminEmails: ['davinwijaya16@gmail.com', 'davinwijaya1996@gmail.com', 'davin@wealthtrack.app'],
+      defaultUsdIdrRate: 15850,
+    };
+    res.json({ settings });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch system settings' });
+  }
+});
+
+app.put('/api/admin/system-settings', authenticateAdmin, (req: AuthenticatedRequest, res: Response): void => {
+  try {
+    const { announcement, maintenanceMode, allowNewRegistrations, adminEmails, defaultUsdIdrRate } = req.body;
+
+    if (!db.data.systemSettings) {
+      db.data.systemSettings = {
+        announcement: { id: 'default', message: '', type: 'info', enabled: false, updatedAt: new Date().toISOString() },
+        maintenanceMode: false,
+        allowNewRegistrations: true,
+        adminEmails: ['davinwijaya16@gmail.com', 'davinwijaya1996@gmail.com', 'davin@wealthtrack.app'],
+        defaultUsdIdrRate: 15850,
+      };
+    }
+
+    if (announcement !== undefined) {
+      db.data.systemSettings.announcement = {
+        id: announcement.id || 'ann_' + Date.now(),
+        message: String(announcement.message || ''),
+        type: announcement.type || 'info',
+        enabled: Boolean(announcement.enabled),
+        updatedAt: new Date().toISOString(),
+      };
+    }
+
+    if (maintenanceMode !== undefined) {
+      db.data.systemSettings.maintenanceMode = Boolean(maintenanceMode);
+    }
+
+    if (allowNewRegistrations !== undefined) {
+      db.data.systemSettings.allowNewRegistrations = Boolean(allowNewRegistrations);
+    }
+
+    if (adminEmails && Array.isArray(adminEmails)) {
+      // Always retain davinwijaya16@gmail.com
+      const cleaned = Array.from(new Set(['davinwijaya16@gmail.com', ...adminEmails.map((e: string) => String(e).trim().toLowerCase())]));
+      db.data.systemSettings.adminEmails = cleaned;
+    }
+
+    if (defaultUsdIdrRate !== undefined && !isNaN(Number(defaultUsdIdrRate))) {
+      db.data.systemSettings.defaultUsdIdrRate = Number(defaultUsdIdrRate);
+    }
+
+    db.save();
+    res.json({ success: true, settings: db.data.systemSettings });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to update system settings' });
+  }
+});
+
+app.get('/api/admin/export-database', authenticateAdmin, (_req: AuthenticatedRequest, res: Response): void => {
+  try {
+    // Return sanitized dump (remove password hashes)
+    const sanitizedUsers = db.data.users.map(({ passwordHash, ...rest }) => rest);
+    const dump = {
+      exportTimestamp: new Date().toISOString(),
+      platform: 'WealthTrack Pro',
+      stats: {
+        users: db.data.users.length,
+        accounts: db.data.accounts.length,
+        transactions: db.data.transactions.length,
+        investments: db.data.investments.length,
+      },
+      users: sanitizedUsers,
+      accounts: db.data.accounts,
+      transactions: db.data.transactions,
+      investments: db.data.investments,
+      settings: db.data.settings,
+      systemSettings: db.data.systemSettings,
+    };
+    res.json(dump);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to export database' });
   }
 });
 

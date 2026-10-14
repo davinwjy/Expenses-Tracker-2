@@ -7,7 +7,51 @@ export interface User {
   id: string;
   email: string;
   name: string;
+  role?: 'admin' | 'user';
   createdAt?: string;
+}
+
+export interface AdminOverviewStats {
+  totalUsers: number;
+  totalAccounts: number;
+  totalTransactions: number;
+  totalInvestments: number;
+  totalVolumeIdr: number;
+  totalTrackedAssetsIdr: number;
+  serverStatus: 'online' | 'degraded';
+  dbType: string;
+  uptimeSeconds: number;
+  currentUsdRate: number;
+  adminCount: number;
+  registeredAdmins: string[];
+}
+
+export interface AdminUserListItem {
+  id: string;
+  name: string;
+  email: string;
+  role: 'admin' | 'user';
+  createdAt: string;
+  accountsCount: number;
+  transactionsCount: number;
+  investmentsCount: number;
+  totalNetWorthIdr?: number;
+}
+
+export interface SystemAnnouncement {
+  id: string;
+  message: string;
+  type: 'info' | 'warning' | 'alert' | 'success';
+  enabled: boolean;
+  updatedAt: string;
+}
+
+export interface SystemSettings {
+  announcement: SystemAnnouncement;
+  maintenanceMode: boolean;
+  allowNewRegistrations: boolean;
+  adminEmails: string[];
+  defaultUsdIdrRate: number;
 }
 
 export interface Account {

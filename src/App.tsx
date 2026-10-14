@@ -9,6 +9,8 @@ import { ExpensesView } from './components/ExpensesView';
 import { AccountsView } from './components/AccountsView';
 import { InvestmentsView } from './components/InvestmentsView';
 import { StatsView } from './components/StatsView';
+import { AdminView } from './components/AdminView';
+import { GlobalAnnouncementBanner } from './components/GlobalAnnouncementBanner';
 import { AddExpenseModal } from './components/Modals/AddExpenseModal';
 import { TransferModal } from './components/Modals/TransferModal';
 import { AccountModal } from './components/Modals/AccountModal';
@@ -77,6 +79,7 @@ const MainAppContent: React.FC = () => {
         />
 
         <div className="flex-1 flex flex-col min-w-0 min-h-screen">
+          <GlobalAnnouncementBanner />
           <TopHeader
             onOpenMobileMenu={() => setIsMobileMenuOpen(true)}
           />
@@ -87,6 +90,7 @@ const MainAppContent: React.FC = () => {
             {activeTab === 'accounts' && <AccountsView />}
             {activeTab === 'investments' && <InvestmentsView />}
             {activeTab === 'stats' && <StatsView />}
+            {activeTab === 'admin' && <AdminView />}
           </main>
         </div>
       </div>

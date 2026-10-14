@@ -14,10 +14,12 @@ import {
   RefreshCw,
   LogOut,
   Sparkles,
+  Shield,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useFinance } from '../context/FinanceContext';
 import { formatIdr } from '../lib/formatters';
+import { isUserAdmin } from '../lib/admin';
 
 interface TopHeaderProps {
   onOpenMobileMenu: () => void;
@@ -29,6 +31,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
   const { user, logout, isFirebase } = useAuth();
   const {
     activeTab,
+    setActiveTab,
     isPrivacyMode,
     togglePrivacyMode,
     usdIdrRate,
@@ -90,6 +93,11 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
       title: 'Analytics & Reports',
       subtitle: 'Cash Flow Distribution & Asset Allocation',
       tag: 'Insights',
+    },
+    admin: {
+      title: 'Admin Console',
+      subtitle: 'Manage Users, davinwijaya16@gmail.com Access & System Settings',
+      tag: 'Management',
     },
   };
 
@@ -319,9 +327,34 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
             {isUserMenuOpen && (
               <div className="absolute right-0 mt-2 w-60 p-2 bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl z-50 animate-in fade-in zoom-in-95 space-y-1">
                 <div className="px-2.5 py-2 border-b border-slate-800">
-                  <p className="text-xs font-bold text-white truncate">{user?.name || 'Account'}</p>
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs font-bold text-white truncate">{user?.name || 'Account'}</p>
+                    {isUserAdmin(user) && (
+                      <span className="text-[9px] px-1.5 py-0.2 rounded font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                        Admin
+                      </span>
+                    )}
+                  </div>
                   <p className="text-[11px] text-slate-400 truncate">{user?.email}</p>
                 </div>
+
+                {isUserAdmin(user) && (
+                  <button
+                    onClick={() => {
+                      setIsUserMenuOpen(false);
+                      setActiveTab('admin');
+                    }}
+                    className="w-full flex items-center justify-between px-2.5 py-2 text-xs text-emerald-300 hover:bg-emerald-500/10 rounded-xl cursor-pointer transition-colors font-semibold"
+                  >
+                    <span className="flex items-center gap-2">
+                      <Shield className="w-3.5 h-3.5 text-emerald-400" />
+                      <span>Admin Console</span>
+                    </span>
+                    <span className="text-[10px] bg-emerald-500/20 px-1.5 py-0.5 rounded text-emerald-300 font-mono">
+                      Manage
+                    </span>
+                  </button>
+                )}
 
                 <button
                   onClick={() => {

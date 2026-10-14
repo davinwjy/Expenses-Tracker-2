@@ -19,6 +19,7 @@ import {
 } from 'firebase/firestore';
 import { firebaseAuth, firestoreDb } from './firebase';
 import { User, Account, Transaction, Investment, UserSettings } from '../types';
+import { isUserAdmin } from './admin';
 
 /**
  * Recursively removes all properties with undefined values.
@@ -60,6 +61,7 @@ export const firestoreService = {
       id: fbUser.uid,
       email: fbUser.email || email,
       name: displayName,
+      role: isUserAdmin({ id: fbUser.uid, email: fbUser.email || email, name: displayName }) ? 'admin' : 'user',
       createdAt: new Date().toISOString(),
     };
 
@@ -80,10 +82,14 @@ export const firestoreService = {
     const cred = await signInWithEmailAndPassword(firebaseAuth, email, password);
     const fbUser = cred.user;
 
+    const uEmail = fbUser.email || email;
+    const uName = fbUser.displayName || email.split('@')[0];
+
     return {
       id: fbUser.uid,
-      email: fbUser.email || email,
-      name: fbUser.displayName || email.split('@')[0],
+      email: uEmail,
+      name: uName,
+      role: isUserAdmin({ id: fbUser.uid, email: uEmail, name: uName }) ? 'admin' : 'user',
       createdAt: fbUser.metadata.creationTime,
     };
   },
@@ -102,10 +108,13 @@ export const firestoreService = {
 
     return onAuthStateChanged(firebaseAuth, (fbUser: FirebaseUser | null) => {
       if (fbUser) {
+        const uEmail = fbUser.email || '';
+        const uName = fbUser.displayName || (fbUser.email ? fbUser.email.split('@')[0] : 'User');
         callback({
           id: fbUser.uid,
-          email: fbUser.email || '',
-          name: fbUser.displayName || (fbUser.email ? fbUser.email.split('@')[0] : 'User'),
+          email: uEmail,
+          name: uName,
+          role: isUserAdmin({ id: fbUser.uid, email: uEmail, name: uName }) ? 'admin' : 'user',
           createdAt: fbUser.metadata.creationTime,
         });
       } else {

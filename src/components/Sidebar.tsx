@@ -27,6 +27,7 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { useFinance } from '../context/FinanceContext';
 import { formatIdr, formatUsd, formatMasked } from '../lib/formatters';
+import { isUserAdmin } from '../lib/admin';
 
 interface SidebarProps {
   isMobileOpen: boolean;
@@ -86,48 +87,61 @@ export const Sidebar: React.FC<SidebarProps> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  const isAdmin = isUserAdmin(user);
+
   const navItems = [
     {
-      id: 'dashboard',
+      id: 'dashboard' as const,
       label: 'Dashboard',
       icon: LayoutDashboard,
       badge: null,
       description: 'Wealth overview',
     },
     {
-      id: 'expenses',
+      id: 'expenses' as const,
       label: 'Transactions',
       icon: Receipt,
       badge: transactions.length > 0 ? transactions.length : null,
       description: 'Income & expenses',
     },
     {
-      id: 'accounts',
+      id: 'accounts' as const,
       label: 'Accounts',
       icon: WalletCards,
       badge: accounts.length > 0 ? accounts.length : null,
       description: 'Banks & wallets',
     },
     {
-      id: 'investments',
+      id: 'investments' as const,
       label: 'Portfolio',
       icon: TrendingUp,
       badge: investments.length > 0 ? investments.length : null,
       description: 'Investment assets',
     },
     {
-      id: 'stats',
+      id: 'stats' as const,
       label: 'Analytics',
       icon: PieChart,
       badge: null,
       description: 'Reports & trends',
     },
-  ] as const;
+    ...(isAdmin
+      ? [
+          {
+            id: 'admin' as const,
+            label: 'Admin Panel',
+            icon: Shield,
+            badge: 'Admin',
+            description: 'Site management',
+          },
+        ]
+      : []),
+  ];
 
   const netWorthIdr = stats?.totalNetWorthIdr || 0;
   const netWorthUsd = usdIdrRate > 0 ? netWorthIdr / usdIdrRate : 0;
 
-  const handleSelectNav = (tabId: typeof navItems[number]['id']) => {
+  const handleSelectNav = (tabId: 'dashboard' | 'expenses' | 'accounts' | 'investments' | 'stats' | 'admin') => {
     setActiveTab(tabId);
     onCloseMobile();
   };
@@ -507,6 +521,23 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <p className="font-bold text-white truncate">{user?.name || 'User'}</p>
               <p className="text-[10px] text-slate-400 truncate">{user?.email}</p>
             </div>
+
+            {isAdmin && (
+              <button
+                onClick={() => {
+                  setIsUserMenuOpen(false);
+                  setActiveTab('admin');
+                  onCloseMobile();
+                }}
+                className="w-full flex items-center justify-between px-2.5 py-2 text-xs text-emerald-300 hover:bg-emerald-500/10 rounded-lg cursor-pointer font-semibold"
+              >
+                <span className="flex items-center gap-2">
+                  <Shield className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Admin Panel</span>
+                </span>
+                <span className="text-[10px] bg-emerald-500/20 px-1 rounded text-emerald-300">Manage</span>
+              </button>
+            )}
 
             <button
               onClick={() => {

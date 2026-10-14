@@ -5,6 +5,7 @@ import {
   Investment,
   DashboardStats,
   UserSettings,
+  SystemAnnouncement,
 } from '../types';
 import { api } from '../lib/api';
 import { useAuth } from './AuthContext';
@@ -29,8 +30,10 @@ interface FinanceContextType {
   isLoading: boolean;
   isPrivacyMode: boolean;
   togglePrivacyMode: () => void;
-  activeTab: 'dashboard' | 'expenses' | 'accounts' | 'investments' | 'stats';
-  setActiveTab: (tab: 'dashboard' | 'expenses' | 'accounts' | 'investments' | 'stats') => void;
+  activeTab: 'dashboard' | 'expenses' | 'accounts' | 'investments' | 'stats' | 'admin';
+  setActiveTab: (tab: 'dashboard' | 'expenses' | 'accounts' | 'investments' | 'stats' | 'admin') => void;
+  announcement: SystemAnnouncement | null;
+  refreshAnnouncement: () => Promise<void>;
   refreshData: () => Promise<void>;
 
   // Account Operations
@@ -129,7 +132,25 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
   });
   const [isRateFetching, setIsRateFetching] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'expenses' | 'accounts' | 'investments' | 'stats'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'expenses' | 'accounts' | 'investments' | 'stats' | 'admin'>('dashboard');
+  const [announcement, setAnnouncement] = useState<SystemAnnouncement | null>(null);
+
+  const refreshAnnouncement = useCallback(async () => {
+    try {
+      const res = await api.getPublicAnnouncement();
+      if (res.announcement && res.announcement.enabled && res.announcement.message) {
+        setAnnouncement(res.announcement);
+      } else {
+        setAnnouncement(null);
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  useEffect(() => {
+    refreshAnnouncement();
+  }, [refreshAnnouncement]);
 
   // Privacy mode persistent in localStorage
   const [isPrivacyMode, setIsPrivacyMode] = useState<boolean>(() => {
@@ -702,6 +723,8 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
         togglePrivacyMode,
         activeTab,
         setActiveTab,
+        announcement,
+        refreshAnnouncement,
         refreshData,
         addAccount,
         updateAccount,

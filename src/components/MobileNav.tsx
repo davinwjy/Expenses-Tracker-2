@@ -11,12 +11,14 @@ import {
   X,
   Building2,
   Flame,
+  Shield,
 } from 'lucide-react';
 import { useFinance } from '../context/FinanceContext';
 import { useAuth } from '../context/AuthContext';
+import { isUserAdmin } from '../lib/admin';
 
 export const MobileNav: React.FC = () => {
-  const { isFirebase } = useAuth();
+  const { user, isFirebase } = useAuth();
   const {
     activeTab,
     setActiveTab,
@@ -150,6 +152,18 @@ export const MobileNav: React.FC = () => {
             >
               + Bank / Cash
             </button>
+            {isUserAdmin(user) && (
+              <button
+                onClick={() => {
+                  setIsQuickMenuOpen(false);
+                  setActiveTab('admin');
+                }}
+                className="col-span-2 py-2.5 px-3 rounded-xl text-xs font-semibold text-center flex items-center justify-center gap-1.5 border bg-emerald-950/60 text-emerald-300 border-emerald-800/60 hover:bg-emerald-900/60 transition-colors"
+              >
+                <Shield className="w-3.5 h-3.5 text-emerald-400" />
+                <span>🛡️ Admin Management Console</span>
+              </button>
+            )}
             <button
               onClick={() => {
                 setIsQuickMenuOpen(false);
