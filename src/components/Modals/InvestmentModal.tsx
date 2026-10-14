@@ -259,7 +259,7 @@ export const InvestmentModal: React.FC = () => {
                 </span>
                 <input
                   type="number"
-                  step={isUsd ? '0.01' : '1000'}
+                  step="any"
                   value={amountInvested}
                   onChange={(e) => setAmountInvested(e.target.value)}
                   placeholder={isUsd ? '100.00' : '1,000,000'}
@@ -279,7 +279,7 @@ export const InvestmentModal: React.FC = () => {
                 </span>
                 <input
                   type="number"
-                  step={isUsd ? '0.01' : '1000'}
+                  step="any"
                   value={currentValue}
                   onChange={(e) => setCurrentValue(e.target.value)}
                   placeholder={amountInvested || (isUsd ? '100.00' : '1,000,000')}

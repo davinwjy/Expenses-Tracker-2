@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Check, CreditCard, RotateCcw, AlertCircle, Trash2 } from 'lucide-react';
 import { useFinance } from '../../context/FinanceContext';
 import { AccountType } from '../../types';
+import { formatIdr } from '../../lib/formatters';
 
 const PRESET_COLORS = [
   '#3b82f6', // blue
@@ -243,7 +244,7 @@ export const AccountModal: React.FC = () => {
               </span>
               <input
                 type="number"
-                step="1000"
+                step="any"
                 value={balance}
                 onChange={(e) => setBalance(e.target.value)}
                 placeholder="0"
@@ -251,6 +252,12 @@ export const AccountModal: React.FC = () => {
                 required
               />
             </div>
+            {balance && !isNaN(Number(balance)) && (
+              <div className="mt-1.5 flex items-center justify-between px-1 text-xs font-mono">
+                <span className="text-slate-400 font-sans text-[11px]">Saldo terformat:</span>
+                <span className="font-bold text-blue-400">{formatIdr(Number(balance))}</span>
+              </div>
+            )}
           </div>
 
           {/* Account Number (Optional) */}

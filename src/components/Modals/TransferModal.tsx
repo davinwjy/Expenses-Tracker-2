@@ -300,7 +300,7 @@ export const TransferModal: React.FC = () => {
               <input
                 type="number"
                 min="0"
-                step="1000"
+                step="any"
                 value={amountIdr}
                 onChange={(e) => setAmountIdr(e.target.value)}
                 placeholder="1,000,000"
@@ -308,6 +308,12 @@ export const TransferModal: React.FC = () => {
                 required
               />
             </div>
+            {amountIdr && !isNaN(Number(amountIdr)) && Number(amountIdr) > 0 && (
+              <div className="mt-1.5 flex items-center justify-between px-1 text-xs font-mono">
+                <span className="text-slate-400 font-sans text-[11px]">Nominal terformat:</span>
+                <span className="font-bold text-indigo-400">{formatIdr(Number(amountIdr))}</span>
+              </div>
+            )}
           </div>
 
           {/* USD Conversion Box */}

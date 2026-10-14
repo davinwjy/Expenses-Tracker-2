@@ -266,7 +266,7 @@ export const AddExpenseModal: React.FC = () => {
               <input
                 type="number"
                 min="0"
-                step="1000"
+                step="any"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 placeholder="50,000"
@@ -275,6 +275,14 @@ export const AddExpenseModal: React.FC = () => {
                 autoFocus
               />
             </div>
+
+            {/* Live Formatted IDR Preview */}
+            {amount && !isNaN(Number(amount)) && Number(amount) > 0 && (
+              <div className="mt-1.5 flex items-center justify-between px-1 text-xs font-mono">
+                <span className="text-slate-400 font-sans text-[11px]">Nominal terformat:</span>
+                <span className="font-bold text-emerald-400">{formatIdr(Number(amount))}</span>
+              </div>
+            )}
 
             {/* Quick Increment Buttons */}
             <div className="flex flex-wrap gap-1.5 mt-2">
